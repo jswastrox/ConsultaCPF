@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Termos de Uso — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="pagina-texto">
+  <div class="container">
+    <h1>Termos de Uso</h1>
+    <p>Ao utilizar o {{ site_name }}, você concorda com os termos abaixo.</p>
+    <h2>1. Objeto</h2>
+    <p>O {{ site_name }} oferece consulta de informações associadas a um CPF, com uma prévia gratuita e um resultado completo liberado mediante pagamento via Pix.</p>
+    <h2>2. Uso permitido</h2>
+    <p>As informações disponibilizadas devem ser usadas exclusivamente para finalidades lícitas, sendo proibido o uso para assédio, discriminação, ou qualquer prática vedada pela legislação vigente, incluindo a LGPD.</p>
+    <h2>3. Pagamentos</h2>
+    <p>Os pagamentos são processados via Pix. A liberação do resultado completo ocorre automaticamente após a confirmação do pagamento.</p>
+    <h2>4. Precisão dos dados</h2>
+    <p>Enquanto o ambiente operar em modo de demonstração, os dados exibidos são fictícios e não representam pessoas reais. Após a configuração de uma fonte de dados real, buscamos manter as informações atualizadas, mas não garantimos precisão absoluta.</p>
+    <h2>5. Reembolsos</h2>
+    <p>Solicitações de reembolso podem ser enviadas para {{ contact_email }} e serão avaliadas conforme o caso.</p>
+    <h2>6. Contato</h2>
+    <p>Dúvidas sobre estes termos podem ser enviadas para <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
+  </div>
+</section>
+{% endblock %}

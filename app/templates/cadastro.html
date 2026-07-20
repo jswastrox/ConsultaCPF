@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Criar conta — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="auth-page">
+  <div class="container auth-container">
+    <div class="auth-card">
+      <h1>Criar conta</h1>
+      <p class="auth-lead">Acompanhe seu histórico de consultas e pagamentos.</p>
+
+      {% if erro %}<p class="auth-erro">{{ erro }}</p>{% endif %}
+
+      <form method="post" action="/cadastro" class="auth-form">
+        <label>Nome completo
+          <input type="text" name="nome" value="{{ nome or '' }}" required autofocus>
+        </label>
+        <label>E-mail
+          <input type="email" name="email" value="{{ email or '' }}" required>
+        </label>
+        <label>Confirmar e-mail
+          <input type="email" name="confirmar_email" required>
+        </label>
+        <label>Senha
+          <input type="password" name="senha" required minlength="6">
+        </label>
+        <label>Confirmar senha
+          <input type="password" name="confirmar_senha" required minlength="6">
+        </label>
+        <label class="auth-checkbox">
+          <input type="checkbox" name="aceite_termos" value="true" required>
+          <span>Li e aceito os <a href="/termos" target="_blank">Termos de Uso</a> e a <a href="/privacidade" target="_blank">Política de Privacidade</a></span>
+        </label>
+        <button type="submit" class="btn-primary btn-block">Criar conta</button>
+      </form>
+
+      <p class="auth-alt">Já tem conta? <a href="/login">Entrar</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

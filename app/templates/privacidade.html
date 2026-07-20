@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Política de Privacidade — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="pagina-texto">
+  <div class="container">
+    <h1>Política de Privacidade</h1>
+    <p>Esta política descreve como o {{ site_name }} trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (LGPD).</p>
+    <h2>1. Dados que coletamos</h2>
+    <p>Coletamos o CPF informado na busca, dados de cadastro (nome, e-mail, telefone) quando você cria uma conta, e dados técnicos de navegação (IP, user-agent) para segurança e prevenção de abuso.</p>
+    <h2>2. Como usamos os dados</h2>
+    <p>Usamos os dados para processar sua consulta, gerenciar sua conta, processar pagamentos via Pix e cumprir obrigações legais.</p>
+    <h2>3. Compartilhamento</h2>
+    <p>Não vendemos dados pessoais. Compartilhamos informações apenas com processadores de pagamento (Pix/Woovi) na medida necessária para concluir a transação.</p>
+    <h2>4. Seus direitos</h2>
+    <p>Você pode solicitar acesso, correção ou exclusão dos seus dados pessoais a qualquer momento, entrando em contato pelo e-mail <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
+    <h2>5. Segurança</h2>
+    <p>Adotamos medidas técnicas razoáveis para proteger os dados armazenados, incluindo senhas com hash e sessões autenticadas por token.</p>
+  </div>
+</section>
+{% endblock %}

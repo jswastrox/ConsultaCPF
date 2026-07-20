@@ -1,0 +1,113 @@
+import uuid
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.auth import usuario_logado
+from app.config import get_settings
+from app.database import get_db
+from app.deps import get_or_create_buyer_token
+from app.models import Pessoa, Pedido
+from app.services import woovi
+from app.utils.cpf import apenas_digitos, formatar_cpf
+
+router = APIRouter()
+settings = get_settings()
+
+
+class CriarPedidoRequest(BaseModel):
+    cpf: str
+
+
+@router.post("/api/pedidos")
+def criar_pedido(
+    body: CriarPedidoRequest,
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+):
+    cpf_limpo = apenas_digitos(body.cpf)
+    pessoa = db.get(Pessoa, cpf_limpo)
+    if pessoa is None:
+        raise HTTPException(404, "CPF não encontrado. Consulte antes de comprar o resultado completo.")
+
+    buyer_token = get_or_create_buyer_token(request, response)
+    usuario = usuario_logado(request, db)
+    correlation_id = f"consultacpf-{uuid.uuid4().hex[:20]}"
+
+    try:
+        charge = woovi.criar_cobranca_pix(
+            correlation_id=correlation_id,
+            valor_centavos=settings.report_price_cents,
+            comentario=f"Resultado completo - CPF {formatar_cpf(cpf_limpo)}",
+        )
+    except woovi.WooviError as exc:
+        raise HTTPException(502, f"Não foi possível gerar a cobrança Pix: {exc}") from exc
+
+    pedido = Pedido(
+        correlation_id=correlation_id,
+        cpf=cpf_limpo,
+        buyer_token=buyer_token,
+        usuario_id=usuario.id if usuario else None,
+        valor_centavos=settings.report_price_cents,
+        status="pending",
+        qrcode_image=charge.get("qrCodeImage"),
+        brcode=charge.get("brCode"),
+    )
+    db.add(pedido)
+    db.commit()
+
+    return {
+        "correlation_id": correlation_id,
+        "qrcode_image": pedido.qrcode_image,
+        "brcode": pedido.brcode,
+        "valor_centavos": pedido.valor_centavos,
+    }
+
+
+@router.get("/api/pedidos/{correlation_id}/status")
+def status_pedido(correlation_id: str, db: Session = Depends(get_db)):
+    pedido = db.scalar(select(Pedido).where(Pedido.correlation_id == correlation_id))
+    if pedido is None:
+        raise HTTPException(404, "Pedido não encontrado.")
+
+    if pedido.status == "pending":
+        try:
+            charge = woovi.consultar_cobranca(correlation_id)
+            if woovi.cobranca_esta_paga(charge):
+                pedido.status = "paid"
+                pedido.pago_em = datetime.utcnow()
+                db.commit()
+        except woovi.WooviError:
+            pass  # mantém status atual; o webhook ainda pode confirmar depois
+
+    return {"status": pedido.status, "cpf": pedido.cpf}
+
+
+@router.post("/webhooks/woovi")
+async def webhook_woovi(request: Request, db: Session = Depends(get_db)):
+    payload = await request.json()
+    charge = payload.get("charge") or {}
+    correlation_id = charge.get("correlationID")
+    if not correlation_id:
+        return {"ok": True}
+
+    pedido = db.scalar(select(Pedido).where(Pedido.correlation_id == correlation_id))
+    if pedido is None or pedido.status == "paid":
+        return {"ok": True}
+
+    # Não confiamos apenas no corpo do webhook: confirmamos direto na Woovi.
+    try:
+        charge_confirmado = woovi.consultar_cobranca(correlation_id)
+    except woovi.WooviError:
+        return {"ok": True}
+
+    if woovi.cobranca_esta_paga(charge_confirmado):
+        pedido.status = "paid"
+        pedido.pago_em = datetime.utcnow()
+        db.commit()
+
+    return {"ok": True}

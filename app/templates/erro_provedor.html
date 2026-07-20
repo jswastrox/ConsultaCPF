@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Erro na consulta — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="erro-page">
+  <div class="container erro-container">
+    <h1>Não foi possível concluir a consulta</h1>
+    <p>Nossa fonte de dados está indisponível no momento. Tente novamente em alguns instantes.</p>
+    <a href="/" class="btn-primary">Voltar</a>
+  </div>
+</section>
+{% endblock %}

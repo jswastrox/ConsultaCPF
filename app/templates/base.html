@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site_name }} — Encontre informações de forma rápida e segura{% endblock %}</title>
+  <meta name="description" content="{% block description %}Consulte CPF com prévia gratuita e resultado completo liberado na hora via Pix. Plataforma moderna, segura e conforme a LGPD.{% endblock %}">
+  <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:title" content="{% block og_title %}{{ site_name }} — Encontre informações de forma rápida e segura{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Consulte CPF com prévia gratuita e resultado completo liberado na hora via Pix.{% endblock %}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="{{ site_url }}/static/img/logo-icon.png">
+  <meta name="theme-color" content="#0a0e1a">
+
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/static/img/favicon-180.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  {% block structured_data %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{ site_name }}",
+    "url": "{{ canonical_url }}",
+    "logo": "{{ site_url }}/static/img/logo.svg",
+    "description": "Plataforma de consulta pública de dados de CPF com prévia gratuita.",
+    "email": "{{ contact_email }}"
+  }
+  </script>
+  {% endblock %}
+</head>
+<body>
+  {% if modo_demonstracao %}
+  <div class="demo-banner">Modo demonstração — os dados exibidos são fictícios até que uma fonte de dados real seja configurada.</div>
+  {% endif %}
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="/">
+        <img class="logo-mark" src="/static/img/logo.svg" width="28" height="28" alt="">
+        Consulta<span>CPF</span>
+      </a>
+      <nav class="main-nav">
+        <a href="/">Consultar</a>
+        <a href="/sobre">Sobre</a>
+        {% if usuario_logado %}
+          {% if usuario_logado.is_admin %}
+            <a href="/area-admin">Área do administrador</a>
+          {% elif usuario_logado.is_funcionario %}
+            <a href="/area-funcionario">Área do trabalhador</a>
+          {% else %}
+            <a href="/area-usuario">Área do usuário</a>
+          {% endif %}
+          <span class="nav-usuario-nome">{{ usuario_logado.nome.split(" ")[0] }}</span>
+          <form method="post" action="/logout" class="nav-logout-form">
+            <button type="submit" class="nav-logout-btn">Sair</button>
+          </form>
+        {% else %}
+          <a href="/login">Entrar</a>
+          <a href="/cadastro" class="nav-cta">Criar conta</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <strong>Consulta<span>CPF</span></strong>
+        <p>Consulta de dados públicos associados a um CPF, com prévia gratuita. Tratamos dados conforme a LGPD.</p>
+      </div>
+      <div class="footer-badges">
+        <span>Prévia gratuita</span>
+        <span>Pagamento via Pix</span>
+        <span>Dados tratados conforme a LGPD</span>
+      </div>
+      <div class="footer-links">
+        <a href="/termos">Termos de Uso</a>
+        <a href="/privacidade">Política de Privacidade</a>
+        <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 {{ site_name }}. O uso das informações desta plataforma é de responsabilidade do usuário, conforme a legislação vigente.</p>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

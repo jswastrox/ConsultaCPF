@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Sobre — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="pagina-texto">
+  <div class="container">
+    <h1>Sobre o {{ site_name }}</h1>
+    <p>O {{ site_name }} é uma plataforma de consulta de dados associados a um CPF, pensada para ser rápida, moderna e transparente: você vê uma prévia gratuita antes de decidir se quer liberar o resultado completo.</p>
+    <p>Trabalhamos com uma fonte de dados plugável — enquanto uma integração definitiva não é configurada, o ambiente opera em modo de demonstração, com dados fictícios, para que o fluxo completo do produto possa ser testado sem expor dados reais de terceiros.</p>
+    <p>Tratamos toda informação conforme a Lei Geral de Proteção de Dados (LGPD). Dúvidas ou solicitações relacionadas aos seus dados podem ser enviadas para <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Área do trabalhador — {{ site_name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="area-page">
+  <div class="container">
+    <div class="area-hero">
+      <h1>Área do Trabalhador</h1>
+      <p>Consulte clientes cadastrados. Suas próprias consultas de CPF são liberadas sem custo.</p>
+    </div>
+
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card">
+        <span class="admin-kpi-label">Clientes cadastrados</span>
+        <span class="admin-kpi-valor">{{ total_clientes }}</span>
+      </div>
+      <div class="admin-kpi-card">
+        <span class="admin-kpi-label">Novos nos últimos 30 dias</span>
+        <span class="admin-kpi-valor">{{ novos_30_dias }}</span>
+      </div>
+    </div>
+
+    <div class="area-card">
+      <h2>Clientes</h2>
+      <form class="area-busca" method="get" action="/area-funcionario">
+        <input type="text" name="q" value="{{ q }}" placeholder="Buscar por nome, e-mail ou telefone">
+        <button type="submit" class="btn-primary">Buscar</button>
+      </form>
+
+      {% if clientes %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Cadastro</th><th>Consultas pagas</th></tr></thead>
+          <tbody>
+            {% for c in clientes %}
+            <tr>
+              <td>{{ c.id }}</td>
+              <td>{{ c.nome }}</td>
+              <td>{{ c.email }}</td>
+              <td>{{ c.telefone or "—" }}</td>
+              <td>{{ c.criado_em.strftime("%d/%m/%Y") }}</td>
+              <td>{{ consultas_por_cliente.get(c.id, 0) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhum cliente encontrado.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

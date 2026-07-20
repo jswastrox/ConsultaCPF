@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="brand-mark">Consulta<span>CPF</span></p>
+    <h1>Busca rápida e segura de informações associadas a um CPF.</h1>
+    <p class="lead">
+      Informe o CPF e receba uma prévia gratuita na hora. Se quiser o
+      resultado completo, libere com Pix em segundos.
+    </p>
+
+    <form class="search-box" action="/buscar" method="post">
+      <label class="search-label" for="cpf-input">Digite o CPF</label>
+      <div class="search-row">
+        <span class="search-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-3.5-3.5"></path>
+          </svg>
+        </span>
+        <input
+          id="cpf-input"
+          type="text"
+          name="cpf"
+          inputmode="numeric"
+          placeholder="000.000.000-00"
+          maxlength="14"
+          required
+          autofocus
+        >
+        <button type="submit">
+          Consultar
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
+        </button>
+      </div>
+    </form>
+
+    <p class="hero-trust">
+      <span class="hero-trust-icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"></path>
+          <path d="M9 12l2 2 4-4"></path>
+        </svg>
+      </span>
+      Consulta segura. Dados tratados conforme a LGPD.
+    </p>
+  </div>
+</section>
+
+<section class="how-it-works">
+  <div class="container">
+    <h2>Como funciona</h2>
+    <p class="section-lead">Uma busca completa e online em 3 passos.</p>
+    <ol class="steps">
+      <li>
+        <span class="step-number">1</span>
+        <div>
+          <h3>Prévia da pesquisa</h3>
+          <p>Informe o CPF e receba gratuitamente uma prévia com parte das informações encontradas.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-number">2</span>
+        <div>
+          <h3>Pagamento seguro via Pix</h3>
+          <p>Quer o resultado completo? Pague com Pix e a liberação acontece automaticamente.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-number">3</span>
+        <div>
+          <h3>Resultado completo</h3>
+          <p>Veja todas as informações liberadas diretamente na tela, sem espera.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <h2>Perguntas frequentes</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Preciso criar uma conta para consultar?</summary>
+        <p>Não. A prévia pode ser feita sem cadastro. Criar uma conta é útil para acompanhar seu histórico de consultas e pagamentos.</p>
+      </details>
+      <details class="faq-item">
+        <summary>O que aparece na prévia gratuita?</summary>
+        <p>Mostramos parte do nome, situação cadastral e localização aproximada. Dados sensíveis como CPF completo, telefone, e-mail e endereço ficam bloqueados até a liberação.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como funciona o pagamento?</summary>
+        <p>O pagamento é feito via Pix, de forma segura, e a liberação do resultado completo acontece automaticamente após a confirmação.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Os dados são atualizados?</summary>
+        <p>Mantemos um cache local para acelerar novas consultas ao mesmo CPF, com renovação periódica junto à fonte de dados configurada.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Meus dados estão seguros?</summary>
+        <p>Sim. Tratamos as informações conforme a LGPD e não compartilhamos dados de consulta com terceiros fora da finalidade do serviço.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="container cta-final-inner">
+    <h2>Pronto para começar sua busca?</h2>
+    <p>Informe o CPF acima e receba sua prévia gratuita agora mesmo.</p>
+    <a href="#cpf-input" class="btn-primary btn-large">Consultar agora</a>
+  </div>
+</section>
+{% endblock %}

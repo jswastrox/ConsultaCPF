@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Limite de consultas atingido — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="erro-page">
+  <div class="container erro-container">
+    <h1>Muitas consultas em pouco tempo</h1>
+    <p>Por segurança, limitamos o número de consultas gratuitas por período. Tente novamente em alguns minutos.</p>
+    <a href="/" class="btn-primary">Voltar</a>
+  </div>
+</section>
+{% endblock %}

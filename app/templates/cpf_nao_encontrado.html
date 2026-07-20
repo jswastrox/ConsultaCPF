@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}CPF não encontrado — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="erro-page">
+  <div class="container erro-container">
+    <h1>Nenhum resultado encontrado</h1>
+    <p>Não encontramos informações para o CPF {{ cpf | cpf }}.</p>
+    <a href="/" class="btn-primary">Nova busca</a>
+  </div>
+</section>
+{% endblock %}

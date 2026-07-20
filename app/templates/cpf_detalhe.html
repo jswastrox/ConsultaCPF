@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Resultado da consulta — {{ site_name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="resultado-page">
+  <div class="container">
+    <div class="resultado-header">
+      <span class="resultado-cpf">CPF {{ pessoa.cpf | cpf if desbloqueado else pessoa.cpf | mascarar_cpf }}</span>
+      {% if desbloqueado %}
+        <span class="status-pill status-paid">Resultado completo</span>
+      {% else %}
+        <span class="status-pill status-pending">Prévia gratuita</span>
+      {% endif %}
+    </div>
+
+    <div class="resultado-grid">
+      <div class="resultado-card resultado-principal">
+        <h1>{{ pessoa.nome_completo if desbloqueado else (pessoa.nome_completo | mascarar_nome) }}</h1>
+        <dl class="resultado-campos">
+          <div><dt>Situação cadastral</dt><dd>{{ pessoa.situacao_cadastral or "—" }}</dd></div>
+          <div><dt>Idade aproximada</dt><dd>{{ pessoa.idade or "—" }} anos</dd></div>
+          <div><dt>Localização</dt><dd>{{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }}</dd></div>
+
+          <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
+            <dt>Data de nascimento</dt>
+            <dd>{{ pessoa.data_nascimento if desbloqueado else "••/••/••••" }}</dd>
+          </div>
+          <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
+            <dt>Nome da mãe</dt>
+            <dd>{{ pessoa.nome_mae if desbloqueado else "••••• •••••" }}</dd>
+          </div>
+          <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
+            <dt>Telefone</dt>
+            <dd>{{ (pessoa.telefones[0] if desbloqueado else pessoa.telefones[0] | mascarar_telefone) if pessoa.telefones else "—" }}</dd>
+          </div>
+          <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
+            <dt>E-mail</dt>
+            <dd>{{ (pessoa.emails[0] if desbloqueado else pessoa.emails[0] | mascarar_email) if pessoa.emails else "—" }}</dd>
+          </div>
+          <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
+            <dt>Endereço</dt>
+            <dd>
+              {% if desbloqueado %}
+                {{ pessoa.endereco_logradouro }}, {{ pessoa.endereco_numero }} — {{ pessoa.endereco_bairro }}, {{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }} — CEP {{ pessoa.endereco_cep }}
+              {% else %}
+                {{ pessoa.endereco_logradouro }}, ••• — {{ pessoa.endereco_bairro }}, {{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }}
+              {% endif %}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      {% if not desbloqueado %}
+      <div class="resultado-card resultado-paywall">
+        <h2>Desbloquear resultado completo</h2>
+        <p>Libere CPF completo, telefone, e-mail, endereço e nome da mãe pagando com Pix.</p>
+        <p class="paywall-preco">R$ {{ "%.2f"|format(report_price)|replace(".", ",") }}</p>
+        <button id="btn-pagar" class="btn-primary btn-block" data-cpf="{{ pessoa.cpf }}">Pagar com Pix</button>
+        <p class="paywall-seguranca">Pagamento processado via Pix. Liberação automática após confirmação.</p>
+      </div>
+      {% else %}
+      <div class="resultado-card resultado-paywall resultado-liberado">
+        <h2>Resultado liberado</h2>
+        <p>Todos os campos acima já estão desbloqueados para este CPF neste navegador.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div id="modal-pix" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-fechar" id="modal-fechar" aria-label="Fechar">&times;</button>
+    <h2>Pague com Pix</h2>
+    <div id="modal-pix-conteudo">
+      <p class="modal-carregando">Gerando cobrança...</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/checkout.js"></script>
+{% endblock %}

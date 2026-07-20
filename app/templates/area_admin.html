@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Área administrativa — {{ site_name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="area-page">
+  <div class="container">
+    <div class="area-hero area-hero-admin">
+      <h1>Área do Administrador</h1>
+      <p>Finanças, operação, alertas, marketing e controle de usuários da plataforma.</p>
+    </div>
+
+    <div class="admin-tabs">
+      <a class="admin-tab-button {% if aba == 'financas' %}is-active{% endif %}" href="/area-admin?aba=financas">Controle e Finanças</a>
+      <a class="admin-tab-button {% if aba == 'operacao' %}is-active{% endif %}" href="/area-admin?aba=operacao">Operação</a>
+      <a class="admin-tab-button {% if aba == 'alertas' %}is-active{% endif %}" href="/area-admin?aba=alertas">Alertas</a>
+      <a class="admin-tab-button {% if aba == 'marketing' %}is-active{% endif %}" href="/area-admin?aba=marketing">Marketing</a>
+      <a class="admin-tab-button {% if aba == 'configuracoes' %}is-active{% endif %}" href="/area-admin?aba=configuracoes">Configurações</a>
+      <a class="admin-tab-button {% if aba == 'usuarios' %}is-active{% endif %}" href="/area-admin?aba=usuarios">Controle de Usuários</a>
+    </div>
+
+    {% if aba == 'financas' %}
+    <form class="area-busca" method="get" action="/area-admin">
+      <input type="hidden" name="aba" value="financas">
+      <label>De <input type="date" name="de" value="{{ de or '' }}"></label>
+      <label>Até <input type="date" name="ate" value="{{ ate or '' }}"></label>
+      <button type="submit" class="btn-primary">Filtrar</button>
+    </form>
+
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card">
+        <span class="admin-kpi-label">Consultas no período</span>
+        <span class="admin-kpi-valor">{{ consultas_periodo }}</span>
+      </div>
+      <div class="admin-kpi-card admin-kpi-receita">
+        <span class="admin-kpi-label">Receita bruta</span>
+        <span class="admin-kpi-valor">R$ {{ "%.2f"|format(receita_bruta)|replace(".", ",") }}</span>
+      </div>
+      <div class="admin-kpi-card admin-kpi-receita">
+        <span class="admin-kpi-label">Receita líquida (após taxa Pix)</span>
+        <span class="admin-kpi-valor">R$ {{ "%.2f"|format(receita_liquida)|replace(".", ",") }}</span>
+      </div>
+      <div class="admin-kpi-card admin-kpi-despesa">
+        <span class="admin-kpi-label">Despesas</span>
+        <span class="admin-kpi-valor">R$ {{ "%.2f"|format(despesas)|replace(".", ",") }}</span>
+        <span class="admin-kpi-trend">Controle de despesas ainda não implementado</span>
+      </div>
+      <div class="admin-kpi-card admin-kpi-lucro">
+        <span class="admin-kpi-label">Lucro no período</span>
+        <span class="admin-kpi-valor">R$ {{ "%.2f"|format(lucro)|replace(".", ",") }}</span>
+      </div>
+      <div class="admin-kpi-card">
+        <span class="admin-kpi-label">Resultados vendidos</span>
+        <span class="admin-kpi-valor">{{ resultados_vendidos }}</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if aba == 'operacao' %}
+    <form class="area-busca" method="get" action="/area-admin">
+      <input type="hidden" name="aba" value="operacao">
+      <label>De <input type="date" name="de" value="{{ de or '' }}"></label>
+      <label>Até <input type="date" name="ate" value="{{ ate or '' }}"></label>
+      <button type="submit" class="btn-primary">Filtrar</button>
+    </form>
+
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card"><span class="admin-kpi-label">Cobranças criadas</span><span class="admin-kpi-valor">{{ criados }}</span></div>
+      <div class="admin-kpi-card"><span class="admin-kpi-label">Cobranças pagas</span><span class="admin-kpi-valor">{{ pagos }}</span></div>
+    </div>
+
+    <div class="area-card">
+      <h2>Extrato Pix</h2>
+      {% if pedidos %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>CPF</th><th>Valor</th><th>Status</th><th>Criado em</th><th>Pago em</th></tr></thead>
+          <tbody>
+            {% for p in pedidos %}
+            <tr>
+              <td>{{ p.cpf | cpf }}</td>
+              <td>R$ {{ "%.2f"|format(p.valor_centavos / 100)|replace(".", ",") }}</td>
+              <td><span class="status-pill status-{{ p.status }}">{{ p.status }}</span></td>
+              <td>{{ p.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+              <td>{{ p.pago_em.strftime("%d/%m/%Y %H:%M") if p.pago_em else "—" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhuma cobrança no período selecionado.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if aba == 'alertas' %}
+    <div class="area-card">
+      <h2>Canais de notificação</h2>
+      <p class="area-descricao">Destinos que recebem avisos de eventos da plataforma (consulta criada, Pix pago, cadastro de usuário, falha de login etc).</p>
+      <form class="config-form" method="post" action="/area-admin/alertas">
+        <label>E-mail para alertas <input type="email" name="email" value="{{ config.alertas_email }}"></label>
+        <label>WhatsApp <input type="text" name="whatsapp" value="{{ config.alertas_whatsapp }}" placeholder="(11) 91234-5678"></label>
+        <label>Telegram chat_id <input type="text" name="telegram_chat_id" value="{{ config.alertas_telegram_chat_id }}"></label>
+        <button type="submit" class="btn-primary">Salvar canais</button>
+      </form>
+      <p class="area-vazio">Disparo automático por evento ainda não implementado — os canais acima ficam salvos para quando a integração for ligada.</p>
+    </div>
+    {% endif %}
+
+    {% if aba == 'marketing' %}
+    <div class="area-card">
+      <h2>Google Ads &amp; GA4</h2>
+      <p class="area-descricao">Sem integração ativa ainda. Preencha os IDs para habilitar quando as credenciais estiverem prontas.</p>
+      <form class="config-form" method="post" action="/area-admin/marketing">
+        <label>Google Ads Customer ID <input type="text" name="google_customer_id" value="{{ config.ads_google_customer_id }}" placeholder="123-456-7890"></label>
+        <label>GA4 Property ID <input type="text" name="ga4_property_id" value="{{ config.ads_ga4_property_id }}"></label>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </form>
+      <ul class="checklist">
+        <li>{{ "✅" if config.ads_google_customer_id else "⬜" }} Google Ads conectado</li>
+        <li>{{ "✅" if config.ads_ga4_property_id else "⬜" }} GA4 conectado</li>
+        <li>⬜ Looker Studio embed (configure em Configurações → Marketing)</li>
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if aba == 'configuracoes' %}
+    <div class="area-card">
+      <h2>Atendimento</h2>
+      <form class="config-form" method="post" action="/area-admin/configuracoes/atendimento">
+        <label>WhatsApp <input type="text" name="whatsapp" value="{{ config.atendimento_whatsapp }}"></label>
+        <label>E-mail de contato <input type="email" name="email" value="{{ config.atendimento_email }}"></label>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </form>
+    </div>
+    <div class="area-card">
+      <h2>Marketing</h2>
+      <form class="config-form" method="post" action="/area-admin/configuracoes/marketing">
+        <label>URL do Looker Studio <input type="url" name="looker_studio_url" value="{{ config.marketing_looker_studio_url }}"></label>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </form>
+    </div>
+    <div class="area-card">
+      <h2>Financeiro</h2>
+      <form class="config-form" method="post" action="/area-admin/configuracoes/financeiro">
+        <label>Taxa Pix (%) <input type="text" name="pix_taxa_percentual" value="{{ config.financeiro_pix_taxa_percentual }}"></label>
+        <label>Taxa Pix fixa (centavos) <input type="text" name="pix_taxa_fixa_centavos" value="{{ config.financeiro_pix_taxa_fixa_centavos }}"></label>
+        <label class="config-checkbox">
+          <input type="checkbox" name="mostrar_pacote_teste" value="true" {% if config.financeiro_mostrar_pacote_teste == 'true' %}checked{% endif %}>
+          <span>Mostrar pacote de teste de R$ 1,00</span>
+        </label>
+        <button type="submit" class="btn-primary">Salvar</button>
+      </form>
+    </div>
+    {% endif %}
+
+    {% if aba == 'usuarios' %}
+    <div class="area-card">
+      <h2>Controle de Usuários</h2>
+      {% if usuarios %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Papel</th><th>Cadastro</th><th>Consultas pagas</th></tr></thead>
+          <tbody>
+            {% for u in usuarios %}
+            <tr>
+              <td>{{ u.id }}</td>
+              <td>{{ u.nome }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                <form class="papel-form" method="post" action="/area-admin/usuarios/{{ u.id }}/papel">
+                  <select name="papel" {% if u.id == usuario_logado.id %}disabled{% endif %}>
+                    <option value="cliente" {% if u.papel == "cliente" %}selected{% endif %}>Cliente</option>
+                    <option value="funcionario" {% if u.papel == "funcionario" %}selected{% endif %}>Funcionário</option>
+                    <option value="admin" {% if u.papel == "admin" %}selected{% endif %}>Admin</option>
+                  </select>
+                  {% if u.id != usuario_logado.id %}<button type="submit" class="link-desbloquear">Salvar</button>{% endif %}
+                </form>
+              </td>
+              <td>{{ u.criado_em.strftime("%d/%m/%Y") }}</td>
+              <td>{{ consultas_pagas_por_usuario.get(u.id, 0) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhum usuário cadastrado ainda.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

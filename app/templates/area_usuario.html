@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Área do usuário — {{ site_name }}{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="area-page">
+  <div class="container">
+    <div class="area-hero">
+      <h1>Olá, {{ usuario.nome.split(" ")[0] }}</h1>
+      <p>Acompanhe seu histórico de consultas e pagamentos.</p>
+    </div>
+
+    <div class="area-card">
+      <h2>Histórico de consultas</h2>
+      {% if consultas %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>CPF</th><th>Data</th></tr></thead>
+          <tbody>
+            {% for c in consultas %}
+            <tr>
+              <td><a href="/cpf/{{ c.cpf }}">{{ c.cpf | cpf }}</a></td>
+              <td>{{ c.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Você ainda não fez nenhuma consulta.</p>
+      {% endif %}
+    </div>
+
+    <div class="area-card">
+      <h2>Pagamentos</h2>
+      {% if compras %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>CPF</th><th>Valor</th><th>Pago em</th></tr></thead>
+          <tbody>
+            {% for p in compras %}
+            <tr>
+              <td><a href="/cpf/{{ p.cpf }}">{{ p.cpf | cpf }}</a></td>
+              <td>R$ {{ "%.2f"|format(p.valor_centavos / 100)|replace(".", ",") }}</td>
+              <td>{{ p.pago_em.strftime("%d/%m/%Y %H:%M") if p.pago_em else "—" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhum pagamento realizado ainda.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

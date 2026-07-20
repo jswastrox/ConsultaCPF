@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Entrar — {{ site_name }}{% endblock %}
+{% block content %}
+<section class="auth-page">
+  <div class="container auth-container">
+    <div class="auth-card">
+      <h1>Entrar</h1>
+      <p class="auth-lead">Acesse sua conta para ver seu histórico de consultas.</p>
+
+      {% if erro %}<p class="auth-erro">{{ erro }}</p>{% endif %}
+
+      <form method="post" action="/login" class="auth-form">
+        <label>E-mail
+          <input type="email" name="email" value="{{ email or '' }}" required autofocus>
+        </label>
+        <label>Senha
+          <input type="password" name="senha" required minlength="6">
+        </label>
+        <label class="auth-checkbox">
+          <input type="checkbox" name="manter_conectado" value="true" checked>
+          <span>Manter conectado</span>
+        </label>
+        <button type="submit" class="btn-primary btn-block">Entrar</button>
+      </form>
+
+      <p class="auth-alt">Ainda não tem conta? <a href="/cadastro">Criar conta</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
