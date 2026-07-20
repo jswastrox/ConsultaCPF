@@ -393,12 +393,13 @@ a:hover { text-decoration: underline; }
   inset: 0;
   background: rgba(5, 7, 14, 0.72);
   backdrop-filter: blur(4px);
-  display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   padding: 20px;
 }
+.modal-overlay[hidden] { display: none; }
+.modal-overlay:not([hidden]) { display: flex; }
 .modal-box {
   position: relative;
   background: var(--surface);
