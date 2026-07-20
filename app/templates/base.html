@@ -44,32 +44,75 @@
   {% if modo_demonstracao %}
   <div class="demo-banner">Modo demonstração — os dados exibidos são fictícios até que uma fonte de dados real seja configurada.</div>
   {% endif %}
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="/">
-        <img class="logo-mark" src="/static/img/logo.svg" width="28" height="28" alt="">
-        Consulta<span>CPF</span>
+  {% set path = request.url.path %}
+  <header class="site-header topbar" id="site-header">
+    <div class="site-header-inner">
+      <a class="logo topbar-brand" href="/" aria-label="{{ site_name }} — Página inicial">
+        <img class="logo-mark logo-image" src="/static/img/logo.svg" width="28" height="28" alt="">
+        <span class="topbar-brand-text">Consulta<span>CPF</span></span>
       </a>
-      <nav class="main-nav">
-        <a href="/consulta">Consultar</a>
-        <a href="/sobre">Sobre</a>
+
+      <nav id="main-nav-drawer" class="site-nav" aria-label="Navegação principal">
+        <button type="button" class="nav-drawer-close" id="nav-drawer-close" aria-label="Fechar menu">← Fechar menu</button>
+        <ul class="nav-links">
+          <li><a href="/" class="{{ 'active' if path == '/' else '' }}">Página Inicial</a></li>
+          <li><a href="/consulta" class="{{ 'active' if path.startswith('/consulta') else '' }}">Consultar</a></li>
+          <li><a href="/sobre" class="{{ 'active' if path.startswith('/sobre') else '' }}">Sobre</a></li>
+          <li><a href="mailto:{{ contact_email }}">Contato</a></li>
+        </ul>
+
         {% if usuario_logado %}
-          {% if usuario_logado.is_admin %}
-            <a href="/area-admin">Área do administrador</a>
-          {% elif usuario_logado.is_funcionario %}
-            <a href="/area-funcionario">Área do trabalhador</a>
-          {% else %}
-            <a href="/area-usuario">Área do usuário</a>
-          {% endif %}
-          <span class="nav-usuario-nome">{{ usuario_logado.nome.split(" ")[0] }}</span>
-          <form method="post" action="/logout" class="nav-logout-form">
-            <button type="submit" class="nav-logout-btn">Sair</button>
-          </form>
+          <div class="nav-drawer-account">
+            <p class="nav-drawer-section-label">Minha conta</p>
+            {% if usuario_logado.is_admin %}
+              <a href="/area-admin">Área do administrador</a>
+            {% elif usuario_logado.is_funcionario %}
+              <a href="/area-funcionario">Área do trabalhador</a>
+            {% else %}
+              <a href="/area-usuario">Área do usuário</a>
+            {% endif %}
+            <form method="post" action="/logout">
+              <button type="submit" class="nav-drawer-logout">Sair</button>
+            </form>
+          </div>
         {% else %}
-          <a href="/login">Entrar</a>
-          <a href="/cadastro" class="nav-cta">Criar conta</a>
+          <a href="/login" class="nav-drawer-only">Entrar</a>
+          <a href="/cadastro" class="nav-drawer-only nav-drawer-cadastro">Criar conta</a>
         {% endif %}
       </nav>
+
+      <div class="nav-cta" id="header-nav-cta">
+        {% if usuario_logado %}
+          <div class="user-menu" id="header-user-menu">
+            <button type="button" class="user-menu-trigger" id="user-menu-trigger" aria-haspopup="true" aria-expanded="false">
+              {{ usuario_logado.nome.split(" ")[0] }} <span aria-hidden="true">▾</span>
+            </button>
+            <div class="user-menu-dropdown" id="user-menu-dropdown" hidden>
+              {% if usuario_logado.is_admin %}
+                <a href="/area-admin">Área do administrador</a>
+              {% elif usuario_logado.is_funcionario %}
+                <a href="/area-funcionario">Área do trabalhador</a>
+              {% else %}
+                <a href="/area-usuario">Área do usuário</a>
+              {% endif %}
+              <form method="post" action="/logout">
+                <button type="submit" class="user-menu-logout">Sair</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <a href="/login" class="header-login-btn">Entrar</a>
+        {% endif %}
+
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="main-nav-drawer" aria-label="Abrir menu">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-label">Menu</span>
+        </button>
+      </div>
+
+      <button type="button" class="topbar-nav-backdrop" id="nav-backdrop" aria-label="Fechar menu" hidden></button>
     </div>
   </header>
 
@@ -77,28 +120,56 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <strong>Consulta<span>CPF</span></strong>
-        <p>Consulta de dados públicos associados a um CPF, com prévia gratuita. Tratamos dados conforme a LGPD.</p>
+  <footer class="site-footer site-footer--cm">
+    <div class="site-footer-columns">
+      <div class="site-footer-col">
+        <h3 class="site-footer-col-title">Empresa</h3>
+        <ul class="site-footer-col-links">
+          <li><a href="/sobre" class="site-footer-col-link">Sobre nós</a></li>
+          <li><a href="/consulta" class="site-footer-col-link">Consultar</a></li>
+          <li><a href="mailto:{{ contact_email }}" class="site-footer-col-link">Contato</a></li>
+        </ul>
       </div>
-      <div class="footer-badges">
-        <span>Prévia gratuita</span>
-        <span>Pagamento via Pix</span>
-        <span>Dados tratados conforme a LGPD</span>
+      <div class="site-footer-col">
+        <h3 class="site-footer-col-title">Legal</h3>
+        <ul class="site-footer-col-links">
+          <li><a href="/termos" class="site-footer-col-link">Termos de Uso</a></li>
+          <li><a href="/privacidade" class="site-footer-col-link">Política de Privacidade</a></li>
+          <li><a href="/privacidade" class="site-footer-col-link">LGPD</a></li>
+        </ul>
       </div>
-      <div class="footer-links">
-        <a href="/termos">Termos de Uso</a>
-        <a href="/privacidade">Política de Privacidade</a>
-        <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+      <div class="site-footer-col">
+        <h3 class="site-footer-col-title">Atendimento</h3>
+        <ul class="site-footer-col-links">
+          <li><a href="mailto:{{ contact_email }}" class="site-footer-col-link">{{ contact_email }}</a></li>
+          <li class="site-footer-col-muted">Sistema online 24h</li>
+          <li class="site-footer-col-muted">Prévia gratuita · Pagamento via Pix</li>
+        </ul>
       </div>
     </div>
-    <div class="container footer-bottom">
-      <p>&copy; 2026 {{ site_name }}. O uso das informações desta plataforma é de responsabilidade do usuário, conforme a legislação vigente.</p>
+
+    <div class="site-footer-trust-wrap">
+      <div class="site-footer-trust-notice" role="note">
+        <p>
+          <strong>{{ site_name }}</strong> é um serviço privado de consulta de dados públicos.
+          Não somos e não temos vínculo com órgãos governamentais.
+          Tratamos dados conforme a LGPD. O uso das informações é de responsabilidade do usuário.
+        </p>
+      </div>
+    </div>
+
+    <div class="site-footer-legal">
+      <p class="site-footer-legal-line">&copy; 2026 {{ site_name }}</p>
+      <p class="site-footer-legal-cookies">
+        Ao utilizar o site, você concorda com os
+        <a href="/termos">Termos de Uso</a>
+        e a
+        <a href="/privacidade">Política de Privacidade</a>.
+      </p>
     </div>
   </footer>
 
+  <script src="/static/js/header.js" defer></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
