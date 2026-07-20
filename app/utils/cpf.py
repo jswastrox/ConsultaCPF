@@ -1,3 +1,4 @@
+import random
 import re
 
 
@@ -26,6 +27,21 @@ def validar_cpf(cpf: str) -> bool:
     dv1 = _digito_verificador(d[:9])
     dv2 = _digito_verificador(d[:9] + dv1)
     return d[-2:] == dv1 + dv2
+
+
+def gerar_cpf_valido(seed: int) -> str:
+    """Gera um CPF sintaticamente válido e determinístico a partir de uma seed.
+
+    Usado só no modo demonstração para buscas reversas (telefone, nome, etc.)
+    produzirem candidatos estáveis que reaproveitam o fluxo de `/cpf/{cpf}`.
+    """
+    rng = random.Random(seed)
+    base = "".join(str(rng.randint(0, 9)) for _ in range(9))
+    while len(set(base)) == 1:
+        base = "".join(str(rng.randint(0, 9)) for _ in range(9))
+    dv1 = _digito_verificador(base)
+    dv2 = _digito_verificador(base + dv1)
+    return base + dv1 + dv2
 
 
 def mascarar_nome(nome: str) -> str:

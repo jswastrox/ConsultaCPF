@@ -33,6 +33,7 @@ def sitemap_xml():
     base = settings.site_url.rstrip("/")
     paginas_estaticas = [
         ("/", "daily", "1.0"),
+        ("/consulta", "daily", "0.9"),
         ("/sobre", "monthly", "0.5"),
         ("/termos", "yearly", "0.3"),
         ("/privacidade", "yearly", "0.3"),

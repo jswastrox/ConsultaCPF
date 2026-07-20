@@ -2,42 +2,24 @@
 
 {% block content %}
 <section class="hero">
-  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-atmosphere" aria-hidden="true"></div>
   <div class="container hero-inner">
     <p class="brand-mark">Consulta<span>CPF</span></p>
-    <h1>Busca rápida e segura de informações associadas a um CPF.</h1>
+    <h1>Busca rápida e segura de informações públicas.</h1>
     <p class="lead">
-      Informe o CPF e receba uma prévia gratuita na hora. Se quiser o
-      resultado completo, libere com Pix em segundos.
+      Consulte por CPF, telefone, nome, e-mail, endereço ou CNPJ.
+      Veja a prévia gratuita e liberte o resultado completo via Pix.
     </p>
 
-    <form class="search-box" action="/buscar" method="post">
-      <label class="search-label" for="cpf-input">Digite o CPF</label>
-      <div class="search-row">
-        <span class="search-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20l-3.5-3.5"></path>
-          </svg>
-        </span>
-        <input
-          id="cpf-input"
-          type="text"
-          name="cpf"
-          inputmode="numeric"
-          placeholder="000.000.000-00"
-          maxlength="14"
-          required
-          autofocus
-        >
-        <button type="submit">
-          Consultar
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6"></path>
-          </svg>
-        </button>
-      </div>
-    </form>
+    <div class="hero-actions">
+      <a href="/consulta" class="btn-primary btn-large">
+        Começar consulta
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+      </a>
+      <a href="/consulta/cpf" class="btn-ghost">Consultar CPF</a>
+    </div>
 
     <p class="hero-trust">
       <span class="hero-trust-icon" aria-hidden="true">
@@ -51,6 +33,21 @@
   </div>
 </section>
 
+<section class="metodos-preview">
+  <div class="container">
+    <h2>Métodos de consulta</h2>
+    <p class="section-lead">Escolha o dado que você já possui para iniciar a busca.</p>
+    <div class="metodos-strip">
+      <a href="/consulta/cpf">CPF</a>
+      <a href="/consulta/telefone">Telefone</a>
+      <a href="/consulta/nome">Nome</a>
+      <a href="/consulta/email">E-mail</a>
+      <a href="/consulta/endereco">Endereço</a>
+      <a href="/consulta/cnpj">CNPJ</a>
+    </div>
+  </div>
+</section>
+
 <section class="how-it-works">
   <div class="container">
     <h2>Como funciona</h2>
@@ -60,7 +57,7 @@
         <span class="step-number">1</span>
         <div>
           <h3>Prévia da pesquisa</h3>
-          <p>Informe o CPF e receba gratuitamente uma prévia com parte das informações encontradas.</p>
+          <p>Escolha o método, informe os dados e receba gratuitamente uma prévia das informações encontradas.</p>
         </div>
       </li>
       <li>
@@ -90,16 +87,16 @@
         <p>Não. A prévia pode ser feita sem cadastro. Criar uma conta é útil para acompanhar seu histórico de consultas e pagamentos.</p>
       </details>
       <details class="faq-item">
+        <summary>Quais métodos de busca estão disponíveis?</summary>
+        <p>Você pode consultar por CPF, telefone, nome completo, e-mail, endereço (CEP e número) ou CNPJ.</p>
+      </details>
+      <details class="faq-item">
         <summary>O que aparece na prévia gratuita?</summary>
-        <p>Mostramos parte do nome, situação cadastral e localização aproximada. Dados sensíveis como CPF completo, telefone, e-mail e endereço ficam bloqueados até a liberação.</p>
+        <p>Mostramos parte do nome, situação cadastral e localização aproximada. Dados sensíveis ficam bloqueados até a liberação.</p>
       </details>
       <details class="faq-item">
         <summary>Como funciona o pagamento?</summary>
         <p>O pagamento é feito via Pix, de forma segura, e a liberação do resultado completo acontece automaticamente após a confirmação.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Os dados são atualizados?</summary>
-        <p>Mantemos um cache local para acelerar novas consultas ao mesmo CPF, com renovação periódica junto à fonte de dados configurada.</p>
       </details>
       <details class="faq-item">
         <summary>Meus dados estão seguros?</summary>
@@ -112,8 +109,8 @@
 <section class="cta-final">
   <div class="container cta-final-inner">
     <h2>Pronto para começar sua busca?</h2>
-    <p>Informe o CPF acima e receba sua prévia gratuita agora mesmo.</p>
-    <a href="#cpf-input" class="btn-primary btn-large">Consultar agora</a>
+    <p>Escolha o método de consulta e receba sua prévia gratuita agora mesmo.</p>
+    <a href="/consulta" class="btn-primary btn-large">Consultar agora</a>
   </div>
 </section>
 {% endblock %}
