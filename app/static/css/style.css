@@ -1453,6 +1453,18 @@ tr:last-child td { border-bottom: none; }
   font-size: 0.88rem;
 }
 .comparativo-linha td.comparativo-col-label { text-align: left; color: var(--text); font-weight: 500; }
+
+/* Coluna de rótulo fica fixa ao rolar horizontalmente (tabela larga em telas
+   estreitas) — assim o campo continua legível mesmo com Básico/Completo/
+   Detalhado fora da tela. */
+.comparativo-col-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: 1px 0 0 var(--border);
+}
+.comparativo-tabela th.comparativo-col-label { background: var(--bg-elevated); z-index: 2; }
 .comparativo-tabela tfoot td {
   padding: 16px;
   text-align: center;
@@ -1480,4 +1492,19 @@ tr:last-child td { border-bottom: none; }
   .previa-card { padding: 20px 16px; }
   .previa-linha { flex-wrap: wrap; }
   .previa-linha-valor { width: 100%; justify-content: flex-start; text-align: left; margin-left: 42px; }
+
+  .desbloquear-page { padding: 28px 0 56px; }
+  .desbloquear-page h1 { font-size: 1.25rem; }
+  .desbloquear-cpf-badge { font-size: 1rem; padding: 6px 14px; margin-bottom: 14px; }
+  .desbloquear-upgrade-nota { font-size: 0.85rem; padding: 0 12px; }
+  .desbloquear-toggle-diff { font-size: 0.8rem; padding: 7px 14px; margin-bottom: 20px; }
+
+  .comparativo-tabela { min-width: 420px; }
+  .comparativo-tabela th { padding: 9px 10px; font-size: 0.66rem; }
+  .comparativo-linha td { padding: 8px 10px; font-size: 0.78rem; }
+  .comparativo-categoria td { padding: 7px 10px; font-size: 0.72rem; }
+  .comparativo-col-label { min-width: 150px; max-width: 150px; }
+  .comparativo-tabela tfoot td { padding: 10px 8px; }
+  .comparativo-preco { font-size: 0.92rem; margin-bottom: 6px; }
+  .comparativo-tabela tfoot .btn-primary { padding: 8px 6px; font-size: 0.72rem; white-space: normal; line-height: 1.2; }
 }
