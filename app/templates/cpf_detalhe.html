@@ -144,58 +144,8 @@
     </div>
 
     {% if not desbloqueado %}
-    <div class="pacotes-adicionais">
-      <p class="pacotes-titulo">Quer mais dados? Adicione um pacote maior à sua compra:</p>
-
-      <div class="pacote-opcao-wrap">
-        <label class="pacote-opcao">
-          <input type="checkbox" class="pacote-checkbox" value="completa">
-          <span class="pacote-opcao-icone">📋</span>
-          <span class="pacote-opcao-corpo">
-            <strong>Pacote Completo</strong>
-          </span>
-        </label>
-        <details class="pacote-detalhes">
-          <summary>Ver o que traz o Pacote Completo</summary>
-          <div class="pacote-detalhes-lista">
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-vermelho">💍</span> Estado Civil</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-roxo">🪪</span> RG</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">💼</span> Profissão</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-verde">💰</span> Salário Estimado</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-vermelho">🏛️</span> Pessoa Politicamente Exposta</div>
-          </div>
-        </details>
-      </div>
-
-      <div class="pacote-opcao-wrap">
-        <label class="pacote-opcao">
-          <input type="checkbox" class="pacote-checkbox" value="detalhada">
-          <span class="pacote-opcao-icone">📖</span>
-          <span class="pacote-opcao-corpo">
-            <strong>Pacote Detalhado</strong>
-          </span>
-        </label>
-        <details class="pacote-detalhes">
-          <summary>Ver o que traz o Pacote Detalhado</summary>
-          <div class="pacote-detalhes-lista">
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-roxo">⚰️</span> Óbito</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-azul">🧓</span> Aposentado(a)</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">🏢</span> Locais de Trabalho</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-verde">🏭</span> Empresas e Sociedades</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-indigo">🚗</span> Veículos</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-rosa">👪</span> Parentes</div>
-            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">🎁</span> Benefícios que Recebe</div>
-          </div>
-        </details>
-      </div>
-    </div>
-
     <div class="previa-desbloquear-tudo">
       <button type="button" id="btn-pagar" class="btn-primary btn-large btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">🔓 Desbloquear todas as informações</button>
-      <p class="paywall-preco">
-        <span id="preco-selecionado">R$ {{ "%.2f"|format(report_price)|replace(".", ",") }}</span>
-        <span class="paywall-preco-nota">via Pix · liberação automática</span>
-      </p>
     </div>
     {% endif %}
   </div>
@@ -213,13 +163,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-  window.PRECOS_PACOTE = {
-    basico: {{ report_price }},
-    completa: {{ preco_completa }},
-    detalhada: {{ preco_detalhada }}
-  };
-</script>
-<script src="/static/js/pacotes.js"></script>
 <script src="/static/js/checkout.js"></script>
 {% endblock %}
