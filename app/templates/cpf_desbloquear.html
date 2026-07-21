@@ -27,7 +27,7 @@
           <tr class="comparativo-categoria"><td colspan="4">{{ grupo.categoria }}</td></tr>
           {% for campo in grupo.campos %}
           <tr class="comparativo-linha" data-igual="{{ 'true' if (campo.basico == campo.completa and campo.completa == campo.detalhada) else 'false' }}">
-            <td class="comparativo-col-label">{{ campo.icone }} {{ campo.label }}</td>
+            <td class="comparativo-col-label">{{ campo.label }}</td>
             <td>{{ "✅" if campo.basico else "—" }}</td>
             <td>{{ "✅" if campo.completa else "—" }}</td>
             <td>{{ "✅" if campo.detalhada else "—" }}</td>
@@ -40,15 +40,15 @@
             <td class="comparativo-col-label"></td>
             <td>
               <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_basico)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">Comprar</button>
+              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">Comprar</button>
             </td>
             <td>
               <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_completa)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">Comprar</button>
+              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">Comprar</button>
             </td>
             <td>
               <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_detalhada)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">Comprar</button>
+              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">Comprar</button>
             </td>
           </tr>
         </tfoot>

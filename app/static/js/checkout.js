@@ -1,5 +1,5 @@
 (function () {
-  const botoesLiberar = document.querySelectorAll(".btn-liberar-campo");
+  const botoesLiberar = document.querySelectorAll(".js-pix-trigger");
   const modal = document.getElementById("modal-pix");
   const conteudo = document.getElementById("modal-pix-conteudo");
   const fecharBtn = document.getElementById("modal-fechar");
