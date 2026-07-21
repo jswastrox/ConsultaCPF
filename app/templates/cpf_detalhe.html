@@ -87,101 +87,59 @@
           </div>
         </div>
 
+        {% if nivel_completa %}
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-vermelho">💍</span> Estado Civil</div>
-          <div class="previa-linha-valor">
-            {% if nivel_completa %}{{ pessoa.estado_civil or "—" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.estado_civil or "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-roxo">🪪</span> RG</div>
-          <div class="previa-linha-valor">
-            {% if nivel_completa %}{{ pessoa.rg or "—" }}
-            {% else %}<span class="campo-borrado">••.•••.•••-•</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.rg or "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-laranja">💼</span> Profissão</div>
-          <div class="previa-linha-valor">
-            {% if nivel_completa %}{{ pessoa.profissao or "—" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.profissao or "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-verde">💰</span> Salário Estimado</div>
-          <div class="previa-linha-valor">
-            {% if nivel_completa %}R$ {{ "%.2f"|format(pessoa.salario_estimado)|replace(".", ",") if pessoa.salario_estimado else "—" }}
-            {% else %}<span class="campo-borrado">R$ ••••,••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">R$ {{ "%.2f"|format(pessoa.salario_estimado)|replace(".", ",") if pessoa.salario_estimado else "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-vermelho">🏛️</span> Pessoa Politicamente Exposta</div>
-          <div class="previa-linha-valor">
-            {% if nivel_completa %}{{ "Sim" if pessoa.exposta_politicamente else "Não" }}
-            {% else %}<span class="campo-borrado">••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ "Sim" if pessoa.exposta_politicamente else "Não" }}</div>
         </div>
+        {% endif %}
 
+        {% if nivel_detalhada %}
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-roxo">⚰️</span> Óbito</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ "Consta óbito" if pessoa.obito else "Nada consta" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ "Consta óbito" if pessoa.obito else "Nada consta" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-azul">🧓</span> Aposentado(a)</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ "Sim" if pessoa.aposentado else "Não" }}
-            {% else %}<span class="campo-borrado">••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ "Sim" if pessoa.aposentado else "Não" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-laranja">🏢</span> Locais de Trabalho</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ pessoa.locais_trabalho | map(attribute="empresa") | join(", ") if pessoa.locais_trabalho else "—" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.locais_trabalho | map(attribute="empresa") | join(", ") if pessoa.locais_trabalho else "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-verde">🏭</span> Empresas e Sociedades</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ pessoa.empresas_envolvidas | join(", ") if pessoa.empresas_envolvidas else "Nenhuma encontrada" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.empresas_envolvidas | join(", ") if pessoa.empresas_envolvidas else "Nenhuma encontrada" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-indigo">🚗</span> Veículos</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ pessoa.veiculos | join(", ") if pessoa.veiculos else "Nenhum encontrado" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.veiculos | join(", ") if pessoa.veiculos else "Nenhum encontrado" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-rosa">👪</span> Parentes</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ pessoa.parentes | map(attribute="nome") | join(", ") if pessoa.parentes else "—" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.parentes | map(attribute="nome") | join(", ") if pessoa.parentes else "—" }}</div>
         </div>
-
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-laranja">🎁</span> Benefícios que Recebe</div>
-          <div class="previa-linha-valor">
-            {% if nivel_detalhada %}{{ pessoa.beneficios | join(", ") if pessoa.beneficios else "Nenhum encontrado" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">🔓 Desbloquear</button>{% endif %}
-          </div>
+          <div class="previa-linha-valor">{{ pessoa.beneficios | join(", ") if pessoa.beneficios else "Nenhum encontrado" }}</div>
         </div>
+        {% endif %}
       </div>
     </div>
 
