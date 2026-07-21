@@ -6,7 +6,7 @@
   <div class="container container-narrow">
     <div class="previa-card">
       <span class="status-encontrado">⚡ Dados Encontrados</span>
-      <h1>{{ "Relatório Cadastral Completo" if desbloqueado else "Prévia do Relatório Cadastral" }}</h1>
+      <h1>{{ "Relatório Cadastral Completo" if desbloqueado else "Prévia da Consulta" }}</h1>
       <p class="previa-subtitulo">
         {% if desbloqueado %}
           Todas as informações abaixo já estão desbloqueadas para este CPF neste navegador.
@@ -15,7 +15,6 @@
         {% endif %}
       </p>
 
-      <p class="previa-pacote-label">📦 Pacote Básico</p>
       <div class="previa-tabela">
         <div class="previa-tabela-cabecalho">
           <span>Dado solicitado</span>
