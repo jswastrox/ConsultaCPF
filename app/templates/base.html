@@ -52,33 +52,13 @@
         <span class="topbar-brand-text">Consulta<span>CPF</span></span>
       </a>
 
-      <nav id="main-nav-drawer" class="site-nav" aria-label="Navegação principal">
-        <button type="button" class="nav-drawer-close" id="nav-drawer-close" aria-label="Fechar menu">← Fechar menu</button>
+      <nav id="main-nav-drawer-inline" class="site-nav" aria-label="Navegação principal">
         <ul class="nav-links">
           <li><a href="/" class="{{ 'active' if path == '/' else '' }}">Página Inicial</a></li>
           <li><a href="/consulta" class="{{ 'active' if path.startswith('/consulta') else '' }}">Consultar</a></li>
           <li><a href="/sobre" class="{{ 'active' if path.startswith('/sobre') else '' }}">Sobre</a></li>
           <li><a href="/contato" class="{{ 'active' if path.startswith('/contato') else '' }}">Contato</a></li>
         </ul>
-
-        {% if usuario_logado %}
-          <div class="nav-drawer-account">
-            <p class="nav-drawer-section-label">Minha conta</p>
-            {% if usuario_logado.is_admin %}
-              <a href="/area-admin">Área do administrador</a>
-            {% elif usuario_logado.is_funcionario %}
-              <a href="/area-funcionario">Área do trabalhador</a>
-            {% else %}
-              <a href="/area-usuario">Área do usuário</a>
-            {% endif %}
-            <form method="post" action="/logout">
-              <button type="submit" class="nav-drawer-logout">Sair</button>
-            </form>
-          </div>
-        {% else %}
-          <a href="/login" class="nav-drawer-only">Entrar</a>
-          <a href="/cadastro" class="nav-drawer-only nav-drawer-cadastro">Criar conta</a>
-        {% endif %}
       </nav>
 
       <div class="nav-cta" id="header-nav-cta">
@@ -111,10 +91,41 @@
           <span class="nav-toggle-label">Menu</span>
         </button>
       </div>
-
-      <button type="button" class="topbar-nav-backdrop" id="nav-backdrop" aria-label="Fechar menu" hidden></button>
     </div>
   </header>
+
+  {# Fora do <header>: backdrop-filter no header cria um "containing block" novo
+     pra descendentes com position:fixed, então o drawer/backdrop mobile tinham
+     que ficar FORA dele pra "position: fixed" valer pra viewport inteira. #}
+  <button type="button" class="topbar-nav-backdrop" id="nav-backdrop" aria-label="Fechar menu" hidden></button>
+  <nav id="main-nav-drawer" class="site-nav site-nav-drawer" aria-label="Menu">
+    <button type="button" class="nav-drawer-close" id="nav-drawer-close" aria-label="Fechar menu">← Fechar menu</button>
+    <ul class="nav-links">
+      <li><a href="/" class="{{ 'active' if path == '/' else '' }}">Página Inicial</a></li>
+      <li><a href="/consulta" class="{{ 'active' if path.startswith('/consulta') else '' }}">Consultar</a></li>
+      <li><a href="/sobre" class="{{ 'active' if path.startswith('/sobre') else '' }}">Sobre</a></li>
+      <li><a href="/contato" class="{{ 'active' if path.startswith('/contato') else '' }}">Contato</a></li>
+    </ul>
+
+    {% if usuario_logado %}
+      <div class="nav-drawer-account">
+        <p class="nav-drawer-section-label">Minha conta</p>
+        {% if usuario_logado.is_admin %}
+          <a href="/area-admin">Área do administrador</a>
+        {% elif usuario_logado.is_funcionario %}
+          <a href="/area-funcionario">Área do trabalhador</a>
+        {% else %}
+          <a href="/area-usuario">Área do usuário</a>
+        {% endif %}
+        <form method="post" action="/logout">
+          <button type="submit" class="nav-drawer-logout">Sair</button>
+        </form>
+      </div>
+    {% else %}
+      <a href="/login" class="nav-drawer-only">Entrar</a>
+      <a href="/cadastro" class="nav-drawer-only nav-drawer-cadastro">Criar conta</a>
+    {% endif %}
+  </nav>
 
   <main>
     {% block content %}{% endblock %}

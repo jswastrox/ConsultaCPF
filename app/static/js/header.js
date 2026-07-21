@@ -1,24 +1,23 @@
 (function () {
   "use strict";
 
-  var header = document.getElementById("site-header");
   var toggle = document.getElementById("nav-toggle");
   var backdrop = document.getElementById("nav-backdrop");
   var closeBtn = document.getElementById("nav-drawer-close");
   var drawer = document.getElementById("main-nav-drawer");
 
   function setNavOpen(open) {
-    if (!header || !toggle || !backdrop) return;
-    header.classList.toggle("topbar--nav-open", open);
+    if (!toggle || !backdrop) return;
+    document.body.classList.toggle("nav-open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     backdrop.hidden = !open;
     document.body.style.overflow = open ? "hidden" : "";
   }
 
-  if (header && toggle && backdrop) {
+  if (toggle && backdrop) {
     setNavOpen(false);
     toggle.addEventListener("click", function () {
-      setNavOpen(!header.classList.contains("topbar--nav-open"));
+      setNavOpen(!document.body.classList.contains("nav-open"));
     });
     backdrop.addEventListener("click", function () {
       setNavOpen(false);
