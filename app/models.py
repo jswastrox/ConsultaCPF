@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Numeric,
     String,
     Text,
 )
@@ -18,6 +19,11 @@ from app.database import Base
 PAPEL_ADMIN = "admin"
 PAPEL_FUNCIONARIO = "funcionario"
 PAPEL_CLIENTE = "cliente"
+
+PACOTE_BASICO = "basico"
+PACOTE_COMPLETA = "completa"
+PACOTE_DETALHADA = "detalhada"
+ORDEM_PACOTES = (PACOTE_BASICO, PACOTE_COMPLETA, PACOTE_DETALHADA)
 
 
 class Pessoa(Base):
@@ -48,6 +54,22 @@ class Pessoa(Base):
     endereco_cep: Mapped[str | None] = mapped_column(String(9))
     endereco_municipio: Mapped[str | None] = mapped_column(String(120))
     endereco_uf: Mapped[str | None] = mapped_column(String(2))
+
+    # Pacote "completa"
+    estado_civil: Mapped[str | None] = mapped_column(String(30))
+    rg: Mapped[str | None] = mapped_column(String(20))
+    profissao: Mapped[str | None] = mapped_column(String(120))
+    salario_estimado: Mapped[float | None] = mapped_column(Numeric(10, 2))
+    exposta_politicamente: Mapped[bool | None] = mapped_column(Boolean)
+
+    # Pacote "detalhada"
+    obito: Mapped[bool | None] = mapped_column(Boolean)
+    aposentado: Mapped[bool | None] = mapped_column(Boolean)
+    locais_trabalho: Mapped[list | None] = mapped_column(JSON)
+    empresas_envolvidas: Mapped[list | None] = mapped_column(JSON)
+    veiculos: Mapped[list | None] = mapped_column(JSON)
+    parentes: Mapped[list | None] = mapped_column(JSON)
+    beneficios: Mapped[list | None] = mapped_column(JSON)
 
     raw_json: Mapped[dict | None] = mapped_column(JSON)
     fonte: Mapped[str] = mapped_column(String(50), default="mock")
@@ -96,6 +118,7 @@ class Pedido(Base):
 
     valor_centavos: Mapped[int] = mapped_column(BigInteger)
     status: Mapped[str] = mapped_column(String(20), default="pending")  # pending|paid|expired|failed
+    pacote: Mapped[str] = mapped_column(String(20), default=PACOTE_BASICO)  # basico|completa|detalhada
 
     qrcode_image: Mapped[str | None] = mapped_column(Text)
     brcode: Mapped[str | None] = mapped_column(Text)

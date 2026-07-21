@@ -998,7 +998,40 @@ a:hover { text-decoration: underline; }
 .previa-desbloquear-tudo { margin-top: 24px; text-align: center; }
 .previa-desbloquear-tudo .btn-primary { width: 100%; max-width: 420px; }
 .paywall-preco { margin: 14px 0 0; font-family: var(--font-display); font-size: 1.3rem; color: var(--accent-deep); }
-.paywall-preco span { display: block; font-family: var(--font-body); font-size: 0.78rem; font-weight: 400; color: var(--text-dim); margin-top: 2px; }
+.paywall-preco-nota { display: block; font-family: var(--font-body); font-size: 0.78rem; font-weight: 400; color: var(--text-dim); margin-top: 2px; }
+
+/* ---------- Pacotes adicionais (upsell no checkout) ---------- */
+.pacotes-adicionais { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+.pacotes-titulo { font-size: 0.86rem; font-weight: 600; color: var(--text); margin: 0 0 2px; }
+.pacote-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.pacote-opcao:hover { border-color: var(--accent); }
+.pacote-opcao:has(:checked) { border-color: var(--accent); background: var(--accent-glow); }
+.pacote-checkbox { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+.pacote-opcao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--bg-elevated);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.pacote-opcao-corpo { flex: 1; }
+.pacote-opcao-corpo strong { display: flex; justify-content: space-between; gap: 10px; font-size: 0.92rem; color: var(--text); }
+.pacote-opcao-corpo strong em { font-style: normal; color: var(--accent-deep); font-weight: 700; white-space: nowrap; }
+.pacote-opcao-corpo small { display: block; margin-top: 4px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
 
 /* ---------- Pix modal ---------- */
 .modal-overlay {

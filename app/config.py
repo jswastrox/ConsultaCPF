@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     site_name: str = "ConsultaCPF"
     site_url: str = "http://localhost:8000"
     report_price_cents: int = 2990
+    report_price_completa_cents: int = 4990
+    report_price_detalhada_cents: int = 7990
     environment: str = "development"
 
     admin_email: str = ""

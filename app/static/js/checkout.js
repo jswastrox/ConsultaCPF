@@ -7,10 +7,12 @@
   if (!botoesLiberar.length || !modal) return;
 
   let cpf = null;
+  let pacote = "basico";
   let pollTimer = null;
 
   function abrirModal(event) {
     cpf = event.currentTarget.getAttribute("data-cpf");
+    pacote = event.currentTarget.getAttribute("data-pacote") || "basico";
     modal.hidden = false;
     conteudo.innerHTML = '<p class="modal-carregando">Gerando cobrança...</p>';
     criarPedido();
@@ -30,7 +32,7 @@
       const resp = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cpf: cpf }),
+        body: JSON.stringify({ cpf: cpf, pacote: pacote }),
       });
       if (!resp.ok) {
         const erro = await resp.json().catch(() => ({}));

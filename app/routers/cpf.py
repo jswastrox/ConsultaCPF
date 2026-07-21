@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app.auth import usuario_logado
 from app.database import get_db
 from app.deps import get_or_create_buyer_token
-from app.models import Consulta, Pedido
+from app.models import PACOTE_DETALHADA, Consulta, Pedido
 from app.services.cpf_provider import CPFNaoEncontrado, CPFProviderIndisponivel
+from app.services.pacotes import atinge, maior_pacote, preco_centavos
 from app.services.pessoa_service import obter_pessoa
 from app.services.rate_limit import excedeu_limite_consultas
 from app.templating import templates
@@ -72,16 +73,23 @@ def detalhe_cpf(
     )
     db.commit()
 
-    pedido_pago = db.scalar(
+    pedidos_pagos = db.scalars(
         select(Pedido).where(
             Pedido.buyer_token == buyer_token,
             Pedido.cpf == cpf_limpo,
             Pedido.status == "paid",
         )
-    )
+    ).all()
 
-    # Equipe (admin/funcionário) tem acesso ao resultado completo sem pagar.
-    desbloqueado = pedido_pago is not None or (usuario is not None and usuario.is_staff)
+    # Equipe (admin/funcionário) tem acesso ao relatório mais completo sem pagar.
+    if usuario is not None and usuario.is_staff:
+        pacote_desbloqueado = PACOTE_DETALHADA
+    else:
+        pacote_desbloqueado = maior_pacote([p.pacote for p in pedidos_pagos])
+
+    desbloqueado = pacote_desbloqueado is not None
+    nivel_completa = atinge(pacote_desbloqueado, "completa")
+    nivel_detalhada = atinge(pacote_desbloqueado, "detalhada")
 
     # Se a busca foi feita pelo próprio CPF, mostrar o CPF completo na prévia
     # não vaza nada novo (o usuário já digitou esse CPF). Se a busca foi por
@@ -99,7 +107,11 @@ def detalhe_cpf(
         {
             "pessoa": pessoa,
             "desbloqueado": desbloqueado,
+            "nivel_completa": nivel_completa,
+            "nivel_detalhada": nivel_detalhada,
             "mostrar_cpf_completo": mostrar_cpf_completo,
             "mostrar_nome_completo": mostrar_nome_completo,
+            "preco_completa": preco_centavos("completa") / 100,
+            "preco_detalhada": preco_centavos("detalhada") / 100,
         },
     )

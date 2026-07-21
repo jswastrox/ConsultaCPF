@@ -10,16 +10,20 @@ from app.auth import usuario_logado
 from app.config import get_settings
 from app.database import get_db
 from app.deps import get_or_create_buyer_token
-from app.models import Pessoa, Pedido
+from app.models import PACOTE_BASICO, Pessoa, Pedido
 from app.services import woovi
+from app.services.pacotes import pacote_valido, preco_centavos
 from app.utils.cpf import apenas_digitos, formatar_cpf
 
 router = APIRouter()
 settings = get_settings()
 
+_NOMES_PACOTE = {"basico": "Básico", "completa": "Completa", "detalhada": "Detalhada"}
+
 
 class CriarPedidoRequest(BaseModel):
     cpf: str
+    pacote: str = PACOTE_BASICO
 
 
 @router.post("/api/pedidos")
@@ -34,6 +38,9 @@ def criar_pedido(
     if pessoa is None:
         raise HTTPException(404, "CPF não encontrado. Consulte antes de comprar o resultado completo.")
 
+    pacote = pacote_valido(body.pacote)
+    valor_centavos = preco_centavos(pacote)
+
     buyer_token = get_or_create_buyer_token(request, response)
     usuario = usuario_logado(request, db)
     correlation_id = f"consultacpf-{uuid.uuid4().hex[:20]}"
@@ -41,8 +48,8 @@ def criar_pedido(
     try:
         charge = woovi.criar_cobranca_pix(
             correlation_id=correlation_id,
-            valor_centavos=settings.report_price_cents,
-            comentario=f"Resultado completo - CPF {formatar_cpf(cpf_limpo)}",
+            valor_centavos=valor_centavos,
+            comentario=f"Relatorio {_NOMES_PACOTE[pacote]} - CPF {formatar_cpf(cpf_limpo)}",
         )
     except woovi.WooviError as exc:
         raise HTTPException(502, f"Não foi possível gerar a cobrança Pix: {exc}") from exc
@@ -52,8 +59,9 @@ def criar_pedido(
         cpf=cpf_limpo,
         buyer_token=buyer_token,
         usuario_id=usuario.id if usuario else None,
-        valor_centavos=settings.report_price_cents,
+        valor_centavos=valor_centavos,
         status="pending",
+        pacote=pacote,
         qrcode_image=charge.get("qrCodeImage"),
         brcode=charge.get("brCode"),
     )
