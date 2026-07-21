@@ -9,7 +9,7 @@
       <p>Acompanhe seu histórico de consultas e pagamentos.</p>
     </div>
 
-    <div class="area-card">
+    <div class="area-card" id="historico-consultas">
       <h2>Histórico de consultas</h2>
       {% if consultas %}
       <div class="table-wrapper">
@@ -25,12 +25,27 @@
           </tbody>
         </table>
       </div>
+      {% if total_paginas_consultas > 1 %}
+      <div class="area-paginacao">
+        {% if pagina_consultas > 1 %}
+          <a href="/area-usuario?pagina_consultas={{ pagina_consultas - 1 }}&pagina_pagamentos={{ pagina_pagamentos }}#historico-consultas">← Anterior</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">← Anterior</span>
+        {% endif %}
+        <span class="area-paginacao-info">Página {{ pagina_consultas }} de {{ total_paginas_consultas }}</span>
+        {% if pagina_consultas < total_paginas_consultas %}
+          <a href="/area-usuario?pagina_consultas={{ pagina_consultas + 1 }}&pagina_pagamentos={{ pagina_pagamentos }}#historico-consultas">Próxima →</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">Próxima →</span>
+        {% endif %}
+      </div>
+      {% endif %}
       {% else %}
       <p class="area-vazio">Você ainda não fez nenhuma consulta.</p>
       {% endif %}
     </div>
 
-    <div class="area-card">
+    <div class="area-card" id="historico-pagamentos">
       <h2>Pagamentos</h2>
       {% if compras %}
       <div class="table-wrapper">
@@ -47,6 +62,21 @@
           </tbody>
         </table>
       </div>
+      {% if total_paginas_pagamentos > 1 %}
+      <div class="area-paginacao">
+        {% if pagina_pagamentos > 1 %}
+          <a href="/area-usuario?pagina_pagamentos={{ pagina_pagamentos - 1 }}&pagina_consultas={{ pagina_consultas }}#historico-pagamentos">← Anterior</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">← Anterior</span>
+        {% endif %}
+        <span class="area-paginacao-info">Página {{ pagina_pagamentos }} de {{ total_paginas_pagamentos }}</span>
+        {% if pagina_pagamentos < total_paginas_pagamentos %}
+          <a href="/area-usuario?pagina_pagamentos={{ pagina_pagamentos + 1 }}&pagina_consultas={{ pagina_consultas }}#historico-pagamentos">Próxima →</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">Próxima →</span>
+        {% endif %}
+      </div>
+      {% endif %}
       {% else %}
       <p class="area-vazio">Nenhum pagamento realizado ainda.</p>
       {% endif %}

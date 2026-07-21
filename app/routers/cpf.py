@@ -82,14 +82,30 @@ def detalhe_cpf(
             status_code=502,
         )
 
-    db.add(
-        Consulta(
-            cpf=cpf_limpo,
-            ip=ip,
-            user_agent=request.headers.get("user-agent"),
-            usuario_id=usuario.id if usuario else None,
+    # Uma nova consulta ao mesmo CPF pela mesma conta substitui a anterior no
+    # histórico (atualiza a data) em vez de criar uma linha duplicada.
+    consulta_existente = (
+        db.scalar(
+            select(Consulta).where(
+                Consulta.usuario_id == usuario.id, Consulta.cpf == cpf_limpo
+            )
         )
+        if usuario is not None
+        else None
     )
+    if consulta_existente is not None:
+        consulta_existente.ip = ip
+        consulta_existente.user_agent = request.headers.get("user-agent")
+        consulta_existente.criado_em = datetime.utcnow()
+    else:
+        db.add(
+            Consulta(
+                cpf=cpf_limpo,
+                ip=ip,
+                user_agent=request.headers.get("user-agent"),
+                usuario_id=usuario.id if usuario else None,
+            )
+        )
     db.commit()
 
     pacote_desbloqueado = _pacote_desbloqueado_atual(db, usuario, cpf_limpo)
