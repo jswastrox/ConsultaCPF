@@ -912,9 +912,38 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
 }
 .resultado-campos > div:last-child { border-bottom: none; }
-.resultado-campos dt { color: var(--text-dim); font-size: 0.88rem; }
-.resultado-campos dd { margin: 0; text-align: right; color: var(--text); font-weight: 500; }
-.campo-bloqueado dd { color: var(--text-dim); filter: blur(0.3px); }
+.resultado-campos dt { color: var(--text-dim); font-size: 0.88rem; flex-shrink: 0; }
+.resultado-campos dd {
+  margin: 0;
+  text-align: right;
+  color: var(--text);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.campo-borrado {
+  color: var(--text-dim);
+  filter: blur(3px);
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+.btn-liberar-campo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent-glow);
+  color: var(--accent-deep);
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.btn-liberar-campo:hover { background: var(--accent); color: #fff; }
 
 .resultado-paywall { position: sticky; top: 88px; text-align: center; }
 .resultado-paywall h2 { font-size: 1.2rem; }
@@ -1075,6 +1104,149 @@ tr:last-child td { border-bottom: none; }
 }
 .link-desbloquear:hover { text-decoration: underline; }
 
+/* ---------- WhatsApp floating button ---------- */
+.whatsapp-float {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  z-index: 60;
+  transition: transform 0.15s ease;
+}
+.whatsapp-float:hover { transform: translateY(-2px); text-decoration: none; }
+
+/* ---------- Contato: canais (WhatsApp + e-mail) ---------- */
+.contato-channels {
+  width: min(100%, 480px);
+  margin: 24px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.contato-channels-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.contato-channels-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(5, 150, 105, 0.6);
+  flex-shrink: 0;
+}
+.contato-channels-hours-note {
+  margin: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+.contato-channels-card {
+  padding: 22px 22px 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: center;
+}
+.contato-channels-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+.contato-channels-card--whatsapp .contato-channels-card-head { color: #16a34a; }
+.contato-channels-card-lead { margin: 0 0 8px; font-size: 0.88rem; }
+.contato-channels-card-warn { margin: 0 0 8px; font-size: 0.82rem; font-weight: 600; color: var(--warning); }
+.contato-channels-card-highlight { margin: 0 0 12px; font-size: 0.86rem; font-weight: 600; color: #16a34a; }
+.contato-channels-card-number { margin: 0 0 16px; font-size: 1.4rem; font-weight: 800; color: #16a34a; }
+.contato-channels-card-email-inline { color: var(--accent-deep); }
+.contato-channels-privacy-notice {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-align: left;
+}
+.contato-channels-form-wrap { margin-top: 16px; text-align: left; }
+.contato-channels-form { display: grid; gap: 10px; }
+.contato-channels-form label { margin: 6px 0 0; font-size: 0.82rem; font-weight: 700; color: var(--text); }
+.contato-channels-form label:first-child { margin-top: 0; }
+.contato-channels-form input,
+.contato-channels-form select,
+.contato-channels-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+.contato-channels-form textarea { resize: vertical; min-height: 110px; }
+.contato-channels-form input:focus,
+.contato-channels-form select:focus,
+.contato-channels-form textarea:focus { outline: none; border-color: var(--accent); }
+.contato-channels-form-success,
+.contato-channels-form-warning,
+.contato-channels-form-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.contato-channels-form-success { background: var(--success-bg); color: var(--success); }
+.contato-channels-form-warning { background: var(--warning-bg); color: var(--warning); }
+.contato-channels-form-error { background: var(--danger-bg); color: var(--danger); }
+.contato-channels-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.contato-channels-btn:hover { filter: brightness(1.06); transform: translateY(-1px); text-decoration: none; }
+.contato-channels-btn--whatsapp { background: #22c55e; color: #ffffff; }
+.contato-channels-btn--email { background: var(--accent); color: #ffffff; }
+.contato-channels-form .contato-channels-btn--email { max-width: none; width: 100%; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .consulta-grid { grid-template-columns: 1fr 1fr; }
@@ -1089,4 +1261,6 @@ tr:last-child td { border-bottom: none; }
   .consulta-grid { grid-template-columns: 1fr; }
   .consulta-form-panel { padding: 24px 18px; }
   .busca-item { flex-direction: column; align-items: flex-start; }
+  .whatsapp-float { right: 12px; bottom: 12px; width: 52px; height: 52px; }
+  .contato-channels-card { padding: 18px 16px 22px; }
 }

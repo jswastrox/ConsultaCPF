@@ -24,6 +24,7 @@ def detalhe_cpf(
     cpf: str,
     request: Request,
     response: Response,
+    origem: str = "cpf",
     db: Session = Depends(get_db),
 ):
     cpf_limpo = apenas_digitos(cpf)
@@ -82,11 +83,17 @@ def detalhe_cpf(
     # Equipe (admin/funcionário) tem acesso ao resultado completo sem pagar.
     desbloqueado = pedido_pago is not None or (usuario is not None and usuario.is_staff)
 
+    # Se a busca foi feita pelo próprio CPF, mostrar o CPF completo na prévia
+    # não vaza nada novo (o usuário já digitou esse CPF). Se a busca foi por
+    # telefone/nome/e-mail/CNPJ, o CPF também fica mascarado até o pagamento.
+    mostrar_cpf_completo = desbloqueado or origem == "cpf"
+
     return templates.TemplateResponse(
         request,
         "cpf_detalhe.html",
         {
             "pessoa": pessoa,
             "desbloqueado": desbloqueado,
+            "mostrar_cpf_completo": mostrar_cpf_completo,
         },
     )

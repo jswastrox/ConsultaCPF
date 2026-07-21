@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 
-from app.services.busca_service import TIPOS_CONSULTA, TIPOS_META, buscar_candidatos
+from app.services.busca_service import TIPOS_CONSULTA, TIPOS_META, resolver_cpf
 from app.templating import templates
-from app.utils.cpf import apenas_digitos
 
 router = APIRouter()
 
@@ -42,16 +41,15 @@ def buscar(
     if tipo_limpo not in TIPOS_CONSULTA:
         tipo_limpo = "cpf"
 
-    if tipo_limpo == "cpf":
-        cpf_limpo = apenas_digitos(valor)
-        return RedirectResponse(url=f"/cpf/{cpf_limpo}", status_code=303)
+    cpf_alvo = resolver_cpf(tipo_limpo, valor)
+    if not cpf_alvo:
+        return RedirectResponse(url=f"/consulta/{tipo_limpo}", status_code=303)
 
-    resultado = buscar_candidatos(tipo_limpo, valor=valor, cep=cep, numero=numero)
-    return templates.TemplateResponse(
-        request,
-        "busca_resultados.html",
-        {"busca": resultado},
-    )
+    # `origem` diz à tela de prévia se o CPF pode ser mostrado completo (a
+    # pessoa já sabia o CPF, pois foi ela quem digitou) ou se deve continuar
+    # mascarado (a busca foi por telefone/nome/e-mail/CNPJ, então o CPF em
+    # si também é informação nova, paga).
+    return RedirectResponse(url=f"/cpf/{cpf_alvo}?origem={tipo_limpo}", status_code=303)
 
 
 @router.get("/sobre")

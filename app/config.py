@@ -31,7 +31,9 @@ class Settings(BaseSettings):
     admin_email: str = ""
     """E-mail que é automaticamente promovido a role=admin ao logar/cadastrar."""
 
-    contact_email: str = "contato@consultacpf.com.br"
+    contact_email: str = "atende@consultasagora.com.br"
+    contact_whatsapp: str = "5532999764443"
+    contact_phone_display: str = "(32) 99976-4443"
 
     rate_limit_consultas_por_janela: int = 20
     rate_limit_janela_minutos: int = 10

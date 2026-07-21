@@ -1,29 +1,23 @@
-"""Buscas multi-tipo para a página /consulta.
+"""Resolução de buscas multi-tipo (CPF, telefone, nome, e-mail, CNPJ) para a
+página /consulta.
 
-No modo demonstração, gera candidatos fictícios determinísticos a partir do
-termo informado e reaproveita o MockCPFProvider (via CPF gerado) para o
-detalhe. Com provedor HTTP real, esta camada pode ser trocada por lookups
-reversos reais sem mudar a UI.
+Toda busca — não importa o dado usado para pesquisar — converge para a MESMA
+tela de prévia (`/cpf/{cpf}`, mesmo padrão usado por outros sites do
+segmento): resolvemos aqui qual CPF é o "resultado" da busca e a rota
+`/buscar` apenas redireciona para lá. No modo demonstração, geramos um CPF
+sintético determinístico a partir do termo pesquisado (`gerar_cpf_valido`),
+reaproveitando o MockCPFProvider via esse CPF. Com um provedor HTTP real,
+esta função pode passar a fazer um lookup reverso de verdade sem mudar a UI.
 """
 
 from __future__ import annotations
 
 import hashlib
-from typing import Any
 
-from app.services.cpf_provider import get_provider, normalizar_pessoa
-from app.utils.cnpj import formatar_cnpj, validar_cnpj
-from app.utils.cpf import (
-    apenas_digitos,
-    formatar_cpf,
-    gerar_cpf_valido,
-    mascarar_cpf,
-    mascarar_email,
-    mascarar_nome,
-    mascarar_telefone,
-)
+from app.utils.cnpj import validar_cnpj
+from app.utils.cpf import apenas_digitos, gerar_cpf_valido, validar_cpf
 
-TIPOS_CONSULTA = ("cpf", "telefone", "nome", "email", "endereco", "cnpj")
+TIPOS_CONSULTA = ("cpf", "telefone", "nome", "email", "cnpj")
 
 TIPOS_META = {
     "cpf": {
@@ -58,14 +52,6 @@ TIPOS_META = {
         "inputmode": "email",
         "maxlength": "120",
     },
-    "endereco": {
-        "titulo": "Endereço",
-        "descricao": "Consulte por CEP e número para obter uma lista de moradores.",
-        "placeholder": "00000-000",
-        "label": "CEP",
-        "inputmode": "numeric",
-        "maxlength": "9",
-    },
     "cnpj": {
         "titulo": "Número do CNPJ",
         "descricao": "Consulte um CNPJ para obter informações associadas aos sócios.",
@@ -81,106 +67,22 @@ def _seed(texto: str) -> int:
     return int(hashlib.sha256(texto.encode("utf-8")).hexdigest(), 16) % (2**32)
 
 
-def _resultado_pessoa(cpf: str, termo_destaque: str | None = None) -> dict[str, Any]:
-    provider = get_provider()
-    dados = normalizar_pessoa(provider.buscar(cpf))
-    return {
-        "cpf": cpf,
-        "cpf_formatado": formatar_cpf(cpf),
-        "cpf_mascarado": mascarar_cpf(cpf),
-        "nome_completo": dados.get("nome_completo") or "—",
-        "nome_mascarado": mascarar_nome(dados.get("nome_completo") or ""),
-        "situacao_cadastral": dados.get("situacao_cadastral") or "—",
-        "municipio": dados.get("endereco_municipio") or "—",
-        "uf": dados.get("endereco_uf") or "—",
-        "telefone_mascarado": mascarar_telefone((dados.get("telefones") or [""])[0] if dados.get("telefones") else ""),
-        "email_mascarado": mascarar_email((dados.get("emails") or [""])[0] if dados.get("emails") else ""),
-        "termo_destaque": termo_destaque,
-    }
-
-
-def buscar_candidatos(
-    tipo: str,
-    valor: str = "",
-    cep: str = "",
-    numero: str = "",
-) -> dict[str, Any]:
+def resolver_cpf(tipo: str, valor: str = "") -> str | None:
+    """Retorna o CPF (11 dígitos) que a prévia deve exibir para essa busca,
+    ou None se o valor informado for inválido."""
     tipo = (tipo or "cpf").strip().lower()
-    if tipo not in TIPOS_CONSULTA:
-        tipo = "cpf"
-
-    meta = TIPOS_META[tipo]
     valor = (valor or "").strip()
-    cep = (cep or "").strip()
-    numero = (numero or "").strip()
+    if not valor:
+        return None
 
-    if tipo == "endereco":
-        termo = f"{apenas_digitos(cep)}-{numero}"
-        termo_exibido = f"CEP {cep}" + (f", nº {numero}" if numero else "")
-    else:
-        termo = valor
-        termo_exibido = valor
-
-    if not termo or (tipo == "endereco" and len(apenas_digitos(cep)) < 8):
-        return {
-            "tipo": tipo,
-            "meta": meta,
-            "termo": termo_exibido,
-            "resultados": [],
-            "empresa": None,
-            "erro": "Informe um valor válido para continuar a busca.",
-        }
+    if tipo == "cpf":
+        cpf = apenas_digitos(valor)
+        return cpf if validar_cpf(cpf) else None
 
     if tipo == "cnpj":
         cnpj = apenas_digitos(valor)
-        if not validar_cnpj(cnpj):
-            return {
-                "tipo": tipo,
-                "meta": meta,
-                "termo": valor,
-                "resultados": [],
-                "empresa": None,
-                "erro": "CNPJ inválido. Verifique os dígitos e tente novamente.",
-            }
-        seed = _seed(f"cnpj:{cnpj}")
-        qtd_socios = 2 + (seed % 3)
-        socios = [
-            _resultado_pessoa(gerar_cpf_valido(seed + i * 9973), termo_destaque=formatar_cnpj(cnpj))
-            for i in range(qtd_socios)
-        ]
-        razao = f"EMPRESA DEMO {_seed(cnpj) % 9000 + 1000} LTDA"
-        return {
-            "tipo": tipo,
-            "meta": meta,
-            "termo": formatar_cnpj(cnpj),
-            "resultados": socios,
-            "empresa": {
-                "cnpj": formatar_cnpj(cnpj),
-                "razao_social": razao,
-                "situacao": "Ativa",
-            },
-            "erro": None,
-        }
+        return gerar_cpf_valido(_seed(f"cnpj:{cnpj}")) if validar_cnpj(cnpj) else None
 
-    seed_base = _seed(f"{tipo}:{termo.lower()}")
-    qtd = 1 + (seed_base % 4)  # 1 a 4 resultados
-    if tipo == "cpf":
-        cpf = apenas_digitos(valor)
-        resultados = [_resultado_pessoa(cpf)] if len(cpf) == 11 else []
-    else:
-        resultados = [
-            _resultado_pessoa(
-                gerar_cpf_valido(seed_base + i * 7919),
-                termo_destaque=termo_exibido,
-            )
-            for i in range(qtd)
-        ]
-
-    return {
-        "tipo": tipo,
-        "meta": meta,
-        "termo": termo_exibido,
-        "resultados": resultados,
-        "empresa": None,
-        "erro": None if resultados else "Nenhum resultado encontrado para esta busca.",
-    }
+    # telefone, nome, email: qualquer termo não vazio resolve a um único
+    # candidato determinístico (mesmo termo -> sempre a mesma "pessoa").
+    return gerar_cpf_valido(_seed(f"{tipo}:{valor.lower()}"))

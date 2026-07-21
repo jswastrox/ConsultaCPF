@@ -5,7 +5,7 @@
 <section class="resultado-page">
   <div class="container">
     <div class="resultado-header">
-      <span class="resultado-cpf">CPF {{ pessoa.cpf | cpf if desbloqueado else pessoa.cpf | mascarar_cpf }}</span>
+      <span class="resultado-cpf">CPF {{ pessoa.cpf | cpf if mostrar_cpf_completo else pessoa.cpf | mascarar_cpf }}</span>
       {% if desbloqueado %}
         <span class="status-pill status-paid">Resultado completo</span>
       {% else %}
@@ -17,25 +17,46 @@
       <div class="resultado-card resultado-principal">
         <h1>{{ pessoa.nome_completo if desbloqueado else (pessoa.nome_completo | mascarar_nome) }}</h1>
         <dl class="resultado-campos">
-          <div><dt>Situação cadastral</dt><dd>{{ pessoa.situacao_cadastral or "—" }}</dd></div>
-          <div><dt>Idade aproximada</dt><dd>{{ pessoa.idade or "—" }} anos</dd></div>
-          <div><dt>Localização</dt><dd>{{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }}</dd></div>
+          <div>
+            <dt>Data de nascimento</dt>
+            <dd>
+              {% if desbloqueado %}
+                {{ pessoa.data_nascimento }}
+              {% elif pessoa.data_nascimento %}
+                {{ pessoa.data_nascimento.split("-")[2] }}/**/****
+              {% else %}
+                —
+              {% endif %}
+            </dd>
+          </div>
 
           <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
-            <dt>Data de nascimento</dt>
-            <dd>{{ pessoa.data_nascimento if desbloqueado else "••/••/••••" }}</dd>
+            <dt>Situação cadastral</dt>
+            <dd>
+              {% if desbloqueado %}{{ pessoa.situacao_cadastral or "—" }}
+              {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            </dd>
           </div>
           <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
             <dt>Nome da mãe</dt>
-            <dd>{{ pessoa.nome_mae if desbloqueado else "••••• •••••" }}</dd>
+            <dd>
+              {% if desbloqueado %}{{ pessoa.nome_mae or "—" }}
+              {% else %}<span class="campo-borrado">••••• •••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            </dd>
           </div>
           <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
             <dt>Telefone</dt>
-            <dd>{{ (pessoa.telefones[0] if desbloqueado else pessoa.telefones[0] | mascarar_telefone) if pessoa.telefones else "—" }}</dd>
+            <dd>
+              {% if desbloqueado %}{{ pessoa.telefones[0] if pessoa.telefones else "—" }}
+              {% else %}<span class="campo-borrado">(••) •••••-••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            </dd>
           </div>
           <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
             <dt>E-mail</dt>
-            <dd>{{ (pessoa.emails[0] if desbloqueado else pessoa.emails[0] | mascarar_email) if pessoa.emails else "—" }}</dd>
+            <dd>
+              {% if desbloqueado %}{{ pessoa.emails[0] if pessoa.emails else "—" }}
+              {% else %}<span class="campo-borrado">••••••@••••••.com</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            </dd>
           </div>
           <div class="{% if not desbloqueado %}campo-bloqueado{% endif %}">
             <dt>Endereço</dt>
@@ -43,7 +64,7 @@
               {% if desbloqueado %}
                 {{ pessoa.endereco_logradouro }}, {{ pessoa.endereco_numero }} — {{ pessoa.endereco_bairro }}, {{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }} — CEP {{ pessoa.endereco_cep }}
               {% else %}
-                {{ pessoa.endereco_logradouro }}, ••• — {{ pessoa.endereco_bairro }}, {{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }}
+                <span class="campo-borrado">Rua ••••••••••, ••• — ••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>
               {% endif %}
             </dd>
           </div>
@@ -53,9 +74,9 @@
       {% if not desbloqueado %}
       <div class="resultado-card resultado-paywall">
         <h2>Desbloquear resultado completo</h2>
-        <p>Libere CPF completo, telefone, e-mail, endereço e nome da mãe pagando com Pix.</p>
+        <p>Libere CPF completo, situação cadastral, telefone, e-mail, endereço e nome da mãe pagando com Pix.</p>
         <p class="paywall-preco">R$ {{ "%.2f"|format(report_price)|replace(".", ",") }}</p>
-        <button id="btn-pagar" class="btn-primary btn-block" data-cpf="{{ pessoa.cpf }}">Pagar com Pix</button>
+        <button type="button" id="btn-pagar" class="btn-primary btn-block btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">Liberar informações</button>
         <p class="paywall-seguranca">Pagamento processado via Pix. Liberação automática após confirmação.</p>
       </div>
       {% else %}

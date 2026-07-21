@@ -1,15 +1,16 @@
 (function () {
-  const btnPagar = document.getElementById("btn-pagar");
+  const botoesLiberar = document.querySelectorAll(".btn-liberar-campo");
   const modal = document.getElementById("modal-pix");
   const conteudo = document.getElementById("modal-pix-conteudo");
   const fecharBtn = document.getElementById("modal-fechar");
 
-  if (!btnPagar || !modal) return;
+  if (!botoesLiberar.length || !modal) return;
 
-  const cpf = btnPagar.getAttribute("data-cpf");
+  let cpf = null;
   let pollTimer = null;
 
-  function abrirModal() {
+  function abrirModal(event) {
+    cpf = event.currentTarget.getAttribute("data-cpf");
     modal.hidden = false;
     conteudo.innerHTML = '<p class="modal-carregando">Gerando cobrança...</p>';
     criarPedido();
@@ -79,7 +80,7 @@
     }
   }
 
-  btnPagar.addEventListener("click", abrirModal);
+  botoesLiberar.forEach((btn) => btn.addEventListener("click", abrirModal));
   if (fecharBtn) fecharBtn.addEventListener("click", fecharModal);
   modal.addEventListener("click", (e) => {
     if (e.target === modal) fecharModal();

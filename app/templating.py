@@ -45,4 +45,6 @@ templates.env.globals["site_name"] = settings.site_name
 templates.env.globals["site_url"] = settings.site_url.rstrip("/")
 templates.env.globals["report_price"] = settings.report_price_cents / 100
 templates.env.globals["contact_email"] = settings.contact_email
+templates.env.globals["contact_whatsapp"] = settings.contact_whatsapp
+templates.env.globals["contact_phone_display"] = settings.contact_phone_display
 templates.env.globals["modo_demonstracao"] = settings.cpf_provider == "mock"

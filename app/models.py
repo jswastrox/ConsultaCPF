@@ -151,6 +151,20 @@ class Sessao(Base):
     usuario: Mapped["Usuario"] = relationship(back_populates="sessoes")
 
 
+class MensagemContato(Base):
+    """Mensagens enviadas pelo formulário de e-mail da página /contato."""
+
+    __tablename__ = "mensagens_contato"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    motivo: Mapped[str] = mapped_column(String(30))
+    nome: Mapped[str] = mapped_column(String(255))
+    email: Mapped[str] = mapped_column(String(255))
+    telefone: Mapped[str] = mapped_column(String(20))
+    mensagem: Mapped[str] = mapped_column(Text)
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
 class Configuracao(Base):
     """Configurações da área administrativa (Alertas, Marketing, Financeiro), chave/valor."""
 
