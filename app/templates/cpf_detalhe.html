@@ -148,23 +148,49 @@
     <div class="pacotes-adicionais">
       <p class="pacotes-titulo">Quer mais dados? Adicione um pacote maior à sua compra:</p>
 
-      <label class="pacote-opcao">
-        <input type="checkbox" class="pacote-checkbox" value="completa">
-        <span class="pacote-opcao-icone">📋</span>
-        <span class="pacote-opcao-corpo">
-          <strong>Pacote Completo <em>R$ {{ "%.2f"|format(preco_completa)|replace(".", ",") }}</em></strong>
-          <small>Tudo do Básico + Estado Civil, RG, Profissão, Salário e se é Politicamente Exposto(a)</small>
-        </span>
-      </label>
+      <div class="pacote-opcao-wrap">
+        <label class="pacote-opcao">
+          <input type="checkbox" class="pacote-checkbox" value="completa">
+          <span class="pacote-opcao-icone">📋</span>
+          <span class="pacote-opcao-corpo">
+            <strong>Pacote Completo <em>R$ {{ "%.2f"|format(preco_completa)|replace(".", ",") }}</em></strong>
+            <small>Tudo do Básico + Estado Civil, RG, Profissão, Salário e se é Politicamente Exposto(a)</small>
+          </span>
+        </label>
+        <details class="pacote-detalhes">
+          <summary>Ver o que traz o Pacote Completo</summary>
+          <div class="pacote-detalhes-lista">
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-vermelho">💍</span> Estado Civil</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-roxo">🪪</span> RG</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">💼</span> Profissão</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-verde">💰</span> Salário Estimado</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-vermelho">🏛️</span> Pessoa Politicamente Exposta</div>
+          </div>
+        </details>
+      </div>
 
-      <label class="pacote-opcao">
-        <input type="checkbox" class="pacote-checkbox" value="detalhada">
-        <span class="pacote-opcao-icone">📖</span>
-        <span class="pacote-opcao-corpo">
-          <strong>Pacote Detalhado <em>R$ {{ "%.2f"|format(preco_detalhada)|replace(".", ",") }}</em></strong>
-          <small>Tudo do pacote Completo + Óbito, Locais de Trabalho, Empresas, Veículos, Parentes, Benefícios e se é Aposentado(a)</small>
-        </span>
-      </label>
+      <div class="pacote-opcao-wrap">
+        <label class="pacote-opcao">
+          <input type="checkbox" class="pacote-checkbox" value="detalhada">
+          <span class="pacote-opcao-icone">📖</span>
+          <span class="pacote-opcao-corpo">
+            <strong>Pacote Detalhado <em>R$ {{ "%.2f"|format(preco_detalhada)|replace(".", ",") }}</em></strong>
+            <small>Tudo do pacote Completo + Óbito, Locais de Trabalho, Empresas, Veículos, Parentes, Benefícios e se é Aposentado(a)</small>
+          </span>
+        </label>
+        <details class="pacote-detalhes">
+          <summary>Ver o que traz o Pacote Detalhado</summary>
+          <div class="pacote-detalhes-lista">
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-roxo">⚰️</span> Óbito</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-azul">🧓</span> Aposentado(a)</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">🏢</span> Locais de Trabalho</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-verde">🏭</span> Empresas e Sociedades</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-indigo">🚗</span> Veículos</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-rosa">👪</span> Parentes</div>
+            <div class="pacote-detalhes-item"><span class="previa-icone previa-icone-laranja">🎁</span> Benefícios que Recebe</div>
+          </div>
+        </details>
+      </div>
     </div>
 
     <div class="previa-desbloquear-tudo">
