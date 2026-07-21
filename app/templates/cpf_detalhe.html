@@ -23,7 +23,7 @@
 
         <div class="previa-linha">
           <div class="previa-linha-label"><span class="previa-icone previa-icone-azul">👤</span> Nome Completo</div>
-          <div class="previa-linha-valor">{{ pessoa.nome_completo if desbloqueado else (pessoa.nome_completo | mascarar_nome) }}</div>
+          <div class="previa-linha-valor">{{ pessoa.nome_completo if mostrar_nome_completo else (pessoa.nome_completo | mascarar_nome) }}</div>
         </div>
 
         <div class="previa-linha">

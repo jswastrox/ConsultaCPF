@@ -88,6 +88,11 @@ def detalhe_cpf(
     # telefone/nome/e-mail/CNPJ, o CPF também fica mascarado até o pagamento.
     mostrar_cpf_completo = desbloqueado or origem == "cpf"
 
+    # Mesma lógica para o nome: se a busca foi pelo nome completo, a pessoa
+    # já digitou esse nome — mostrar mascarado só esconderia o que ela
+    # mesma informou.
+    mostrar_nome_completo = desbloqueado or origem == "nome"
+
     return templates.TemplateResponse(
         request,
         "cpf_detalhe.html",
@@ -95,5 +100,6 @@ def detalhe_cpf(
             "pessoa": pessoa,
             "desbloqueado": desbloqueado,
             "mostrar_cpf_completo": mostrar_cpf_completo,
+            "mostrar_nome_completo": mostrar_nome_completo,
         },
     )
