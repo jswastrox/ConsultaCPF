@@ -38,3 +38,53 @@ def maior_pacote(pacotes: list[str]) -> str | None:
     if not pacotes:
         return None
     return max(pacotes, key=nivel)
+
+
+_CAMPOS_POR_CATEGORIA = [
+    ("Dados Pessoais", [
+        ("👤", "Nome Completo", PACOTE_BASICO),
+        ("📅", "Data de Nascimento", PACOTE_BASICO),
+        ("🆔", "CPF", PACOTE_BASICO),
+        ("🛡️", "Situação Cadastral", PACOTE_BASICO),
+        ("👥", "Nome da Mãe", PACOTE_BASICO),
+        ("📞", "Telefones", PACOTE_BASICO),
+        ("✉️", "E-mails", PACOTE_BASICO),
+        ("📍", "Endereços", PACOTE_BASICO),
+    ]),
+    ("Dados Complementares", [
+        ("💍", "Estado Civil", PACOTE_COMPLETA),
+        ("🪪", "RG", PACOTE_COMPLETA),
+        ("💼", "Profissão", PACOTE_COMPLETA),
+        ("💰", "Salário Estimado", PACOTE_COMPLETA),
+        ("🏛️", "Pessoa Politicamente Exposta", PACOTE_COMPLETA),
+    ]),
+    ("Informações Adicionais", [
+        ("⚰️", "Óbito", PACOTE_DETALHADA),
+        ("🧓", "Aposentado(a)", PACOTE_DETALHADA),
+        ("🏢", "Locais de Trabalho", PACOTE_DETALHADA),
+        ("🏭", "Empresas e Sociedades", PACOTE_DETALHADA),
+        ("🚗", "Veículos", PACOTE_DETALHADA),
+        ("👪", "Parentes", PACOTE_DETALHADA),
+        ("🎁", "Benefícios que Recebe", PACOTE_DETALHADA),
+    ]),
+]
+
+
+def tabela_comparativa() -> list[dict]:
+    """Monta a matriz usada na página de escolha de pacote: para cada campo,
+    se ele está incluído no básico/completa/detalhada (cumulativo)."""
+    grupos = []
+    for categoria, campos in _CAMPOS_POR_CATEGORIA:
+        linhas = []
+        for icone, label, nivel_minimo in campos:
+            linhas.append(
+                {
+                    "icone": icone,
+                    "label": label,
+                    "basico": nivel(nivel_minimo) <= nivel(PACOTE_BASICO),
+                    "completa": nivel(nivel_minimo) <= nivel(PACOTE_COMPLETA),
+                    "detalhada": nivel(nivel_minimo) <= nivel(PACOTE_DETALHADA),
+                }
+            )
+        grupos.append({"categoria": categoria, "campos": linhas})
+    return grupos

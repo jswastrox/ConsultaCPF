@@ -1367,6 +1367,79 @@ tr:last-child td { border-bottom: none; }
 .contato-channels-btn--email { background: var(--accent); color: #ffffff; }
 .contato-channels-form .contato-channels-btn--email { max-width: none; width: 100%; }
 
+/* ---------- Escolher pacote (comparativo) ---------- */
+.desbloquear-page { padding: 40px 0 80px; text-align: center; }
+.desbloquear-cpf-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.desbloquear-page h1 { font-size: 1.6rem; margin-bottom: 18px; }
+.desbloquear-toggle-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+  cursor: pointer;
+  margin-bottom: 28px;
+}
+.desbloquear-toggle-diff input { accent-color: var(--accent); cursor: pointer; }
+
+.comparativo-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: left;
+}
+.comparativo-tabela { width: 100%; border-collapse: collapse; min-width: 560px; }
+.comparativo-tabela th {
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-dim);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.comparativo-tabela th.comparativo-col-label { text-align: left; }
+.comparativo-categoria td {
+  padding: 8px 16px;
+  background: var(--accent-glow);
+  border-left: 3px solid var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-deep);
+}
+.comparativo-linha td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.88rem;
+}
+.comparativo-linha td.comparativo-col-label { text-align: left; color: var(--text); font-weight: 500; }
+.comparativo-tabela tfoot td {
+  padding: 16px;
+  text-align: center;
+  background: var(--bg-elevated);
+  border-top: 2px solid var(--border-strong);
+}
+.comparativo-preco { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--accent-deep); }
+.comparativo-tabela tfoot .btn-primary { width: 100%; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .consulta-grid { grid-template-columns: 1fr 1fr; }

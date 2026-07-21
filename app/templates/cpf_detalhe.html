@@ -145,7 +145,7 @@
 
     {% if not desbloqueado %}
     <div class="previa-desbloquear-tudo">
-      <button type="button" id="btn-pagar" class="btn-primary btn-large btn-liberar-campo" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">🔓 Desbloquear todas as informações</button>
+      <a href="/cpf/{{ pessoa.cpf }}/desbloquear?origem={{ origem }}" class="btn-primary btn-large">🔓 Desbloquear todas as informações</a>
     </div>
     {% endif %}
   </div>

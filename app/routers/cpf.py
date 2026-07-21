@@ -4,12 +4,14 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from fastapi.responses import RedirectResponse
+
 from app.auth import usuario_logado
 from app.database import get_db
 from app.deps import get_or_create_buyer_token
-from app.models import PACOTE_DETALHADA, Consulta, Pedido
+from app.models import PACOTE_DETALHADA, Consulta, Pedido, Pessoa
 from app.services.cpf_provider import CPFNaoEncontrado, CPFProviderIndisponivel
-from app.services.pacotes import atinge, maior_pacote, preco_centavos
+from app.services.pacotes import atinge, maior_pacote, preco_centavos, tabela_comparativa
 from app.services.pessoa_service import obter_pessoa
 from app.services.rate_limit import excedeu_limite_consultas
 from app.templating import templates
@@ -111,6 +113,41 @@ def detalhe_cpf(
             "nivel_detalhada": nivel_detalhada,
             "mostrar_cpf_completo": mostrar_cpf_completo,
             "mostrar_nome_completo": mostrar_nome_completo,
+            "preco_completa": preco_centavos("completa") / 100,
+            "preco_detalhada": preco_centavos("detalhada") / 100,
+            "origem": origem,
+        },
+    )
+
+
+@router.get("/cpf/{cpf}/desbloquear")
+def escolher_pacote(
+    cpf: str,
+    request: Request,
+    origem: str = "cpf",
+    db: Session = Depends(get_db),
+):
+    cpf_limpo = apenas_digitos(cpf)
+    if len(cpf_limpo) != 11 or not validar_cpf(cpf_limpo):
+        return templates.TemplateResponse(
+            request, "cpf_invalido.html", {"cpf_digitado": cpf}, status_code=400
+        )
+
+    pessoa = db.get(Pessoa, cpf_limpo)
+    if pessoa is None:
+        # Precisa ter passado pela prévia antes (é lá que a pessoa é consultada/cacheada).
+        return RedirectResponse(url=f"/cpf/{cpf_limpo}?origem={origem}", status_code=303)
+
+    mostrar_cpf_completo = origem == "cpf"
+
+    return templates.TemplateResponse(
+        request,
+        "cpf_desbloquear.html",
+        {
+            "pessoa": pessoa,
+            "mostrar_cpf_completo": mostrar_cpf_completo,
+            "categorias": tabela_comparativa(),
+            "preco_basico": preco_centavos("basico") / 100,
             "preco_completa": preco_centavos("completa") / 100,
             "preco_detalhada": preco_centavos("detalhada") / 100,
         },
