@@ -1534,6 +1534,11 @@ tr:last-child td { border-bottom: none; }
 .comparativo-incluido { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--success); }
 .comparativo-tabela tfoot .btn-primary { width: 100%; }
 
+/* Barra fixa com preco/comprar no rodape, só no mobile (ver breakpoint
+   640px) -- a tabela comparativa é longa e o botao de compra no tfoot some
+   de vista ao rolar; esta barra fica sempre visivel. */
+.comparativo-cta-fixa { display: none; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .consulta-grid { grid-template-columns: 1fr 1fr; }
@@ -1566,4 +1571,39 @@ tr:last-child td { border-bottom: none; }
   .comparativo-tabela tfoot td { padding: 10px 8px; }
   .comparativo-preco { font-size: 0.92rem; margin-bottom: 6px; }
   .comparativo-tabela tfoot .btn-primary { padding: 8px 6px; font-size: 0.72rem; white-space: normal; line-height: 1.2; }
+
+  .desbloquear-page { padding-bottom: 92px; }
+  body:has(.comparativo-cta-fixa) .whatsapp-float { display: none; }
+  .comparativo-cta-fixa {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 65;
+    background: var(--surface);
+    border-top: 1px solid var(--border-strong);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.12);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+    gap: 6px;
+  }
+  .comparativo-cta-fixa-item {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+  }
+  .comparativo-cta-fixa-nome { font-size: 0.66rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+  .comparativo-cta-fixa-preco { font-size: 0.78rem; font-weight: 700; color: var(--accent-deep); }
+  .comparativo-cta-fixa-incluido { font-size: 0.72rem; font-weight: 700; color: var(--success); padding: 8px 0; }
+  .comparativo-cta-fixa-item .btn-primary {
+    width: 100%;
+    padding: 7px 4px;
+    font-size: 0.7rem;
+    white-space: normal;
+    line-height: 1.15;
+  }
 }
