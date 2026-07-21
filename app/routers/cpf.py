@@ -10,11 +10,12 @@ from app.auth import usuario_logado
 from app.database import get_db
 from app.models import PACOTE_DETALHADA, Consulta, Pedido, Pessoa, Usuario
 from app.services.cpf_provider import CPFNaoEncontrado, CPFProviderIndisponivel
+from app.services.eventos import registrar_evento
 from app.services.pacotes import atinge, maior_pacote, nivel as nivel_pacote, preco_centavos, tabela_comparativa
 from app.services.pessoa_service import obter_pessoa
 from app.services.rate_limit import excedeu_limite_consultas
 from app.templating import templates
-from app.utils.cpf import apenas_digitos, validar_cpf
+from app.utils.cpf import apenas_digitos, formatar_cpf, validar_cpf
 
 router = APIRouter()
 
@@ -107,6 +108,10 @@ def detalhe_cpf(
             )
         )
     db.commit()
+    registrar_evento(
+        db, "consulta_criada", descricao=formatar_cpf(cpf_limpo),
+        usuario_id=usuario.id if usuario else None, ip=ip,
+    )
 
     pacote_desbloqueado = _pacote_desbloqueado_atual(db, usuario, cpf_limpo)
     desbloqueado = pacote_desbloqueado is not None

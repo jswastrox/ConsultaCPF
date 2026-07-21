@@ -17,6 +17,7 @@ from app.auth import (
 )
 from app.database import get_db
 from app.models import PAPEL_CLIENTE, Usuario
+from app.services.eventos import registrar_evento
 from app.templating import templates
 
 router = APIRouter()
@@ -48,10 +49,12 @@ def enviar_login(
     next: str = Form("/"),
 ):
     destino = _next_seguro(next)
+    ip = request.client.host if request.client else None
     email_normalizado = email.strip().lower()
     usuario = db.scalar(select(Usuario).where(Usuario.email == email_normalizado))
 
     if usuario is None or not verificar_senha(senha, usuario.senha_hash):
+        registrar_evento(db, "login_falha", descricao=email_normalizado, ip=ip)
         return templates.TemplateResponse(
             request,
             "login.html",
@@ -60,6 +63,7 @@ def enviar_login(
         )
 
     if not usuario.ativo:
+        registrar_evento(db, "login_falha", descricao=f"{email_normalizado} (conta desativada)", usuario_id=usuario.id, ip=ip)
         return templates.TemplateResponse(
             request,
             "login.html",
@@ -69,6 +73,7 @@ def enviar_login(
 
     promover_se_admin(usuario)
     db.commit()
+    registrar_evento(db, "login_sucesso", descricao=usuario.email, usuario_id=usuario.id, ip=ip)
 
     token = criar_sessao(db, usuario, manter_conectado)
     redirect = RedirectResponse(url=destino, status_code=303)
@@ -132,6 +137,10 @@ def enviar_cadastro(
     db.add(usuario)
     db.commit()
     db.refresh(usuario)
+    registrar_evento(
+        db, "cadastro", descricao=usuario.email, usuario_id=usuario.id,
+        ip=request.client.host if request.client else None,
+    )
 
     token = criar_sessao(db, usuario, manter_conectado=True)
     redirect = RedirectResponse(url=destino, status_code=303)

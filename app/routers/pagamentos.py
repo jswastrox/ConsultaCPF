@@ -12,6 +12,7 @@ from app.database import get_db
 from app.deps import get_or_create_buyer_token
 from app.models import PACOTE_BASICO, Pessoa, Pedido
 from app.services import woovi
+from app.services.eventos import registrar_evento
 from app.services.pacotes import pacote_valido, preco_centavos
 from app.utils.cpf import apenas_digitos, formatar_cpf
 
@@ -70,6 +71,11 @@ def criar_pedido(
     )
     db.add(pedido)
     db.commit()
+    registrar_evento(
+        db, "pix_criado",
+        descricao=f"Pacote {_NOMES_PACOTE[pacote]} - CPF {formatar_cpf(cpf_limpo)} - R$ {valor_centavos / 100:.2f}",
+        usuario_id=usuario.id, ip=request.client.host if request.client else None,
+    )
 
     return {
         "correlation_id": correlation_id,
@@ -92,6 +98,11 @@ def status_pedido(correlation_id: str, db: Session = Depends(get_db)):
                 pedido.status = "paid"
                 pedido.pago_em = datetime.utcnow()
                 db.commit()
+                registrar_evento(
+                    db, "pix_pago",
+                    descricao=f"CPF {formatar_cpf(pedido.cpf)} - R$ {pedido.valor_centavos / 100:.2f}",
+                    usuario_id=pedido.usuario_id,
+                )
         except woovi.WooviError:
             pass  # mantém status atual; o webhook ainda pode confirmar depois
 
@@ -120,5 +131,10 @@ async def webhook_woovi(request: Request, db: Session = Depends(get_db)):
         pedido.status = "paid"
         pedido.pago_em = datetime.utcnow()
         db.commit()
+        registrar_evento(
+            db, "pix_pago",
+            descricao=f"CPF {formatar_cpf(pedido.cpf)} - R$ {pedido.valor_centavos / 100:.2f} (webhook)",
+            usuario_id=pedido.usuario_id,
+        )
 
     return {"ok": True}

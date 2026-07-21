@@ -52,6 +52,28 @@
         <span class="admin-kpi-label">Resultados vendidos</span>
         <span class="admin-kpi-valor">{{ resultados_vendidos }}</span>
       </div>
+      <div class="admin-kpi-card">
+        <span class="admin-kpi-label">Ticket médio</span>
+        <span class="admin-kpi-valor">R$ {{ "%.2f"|format(ticket_medio)|replace(".", ",") }}</span>
+      </div>
+    </div>
+
+    <div class="area-card">
+      <h2>Vendas por pacote</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Pacote</th><th>Quantidade</th><th>Receita</th></tr></thead>
+          <tbody>
+            {% for linha in breakdown_pacote %}
+            <tr>
+              <td>{{ linha.pacote }}</td>
+              <td>{{ linha.quantidade }}</td>
+              <td>R$ {{ "%.2f"|format(linha.receita)|replace(".", ",") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     {% endif %}
 
@@ -66,18 +88,39 @@
     <div class="admin-kpi-grid">
       <div class="admin-kpi-card"><span class="admin-kpi-label">Cobranças criadas</span><span class="admin-kpi-valor">{{ criados }}</span></div>
       <div class="admin-kpi-card"><span class="admin-kpi-label">Cobranças pagas</span><span class="admin-kpi-valor">{{ pagos }}</span></div>
+      <div class="admin-kpi-card"><span class="admin-kpi-label">Taxa de conversão</span><span class="admin-kpi-valor">{{ taxa_conversao }}%</span></div>
+    </div>
+
+    <div class="area-card">
+      <h2>Funil Pix</h2>
+      <div class="admin-funil">
+        <div class="admin-funil-etapa">
+          <div class="admin-funil-barra" style="width: 100%;">Criados — {{ criados }}</div>
+        </div>
+        <div class="admin-funil-etapa">
+          <div class="admin-funil-barra admin-funil-barra-paga" style="width: {{ taxa_conversao }}%;">Pagos — {{ pagos }} ({{ taxa_conversao }}%)</div>
+        </div>
+      </div>
     </div>
 
     <div class="area-card">
       <h2>Extrato Pix</h2>
+      <form class="area-busca" method="get" action="/area-admin">
+        <input type="hidden" name="aba" value="operacao">
+        <input type="hidden" name="de" value="{{ de or '' }}">
+        <input type="hidden" name="ate" value="{{ ate or '' }}">
+        <label>E-mail do comprador <input type="text" name="email" value="{{ email }}" placeholder="Filtrar por e-mail"></label>
+        <button type="submit" class="btn-primary">Buscar</button>
+      </form>
       {% if pedidos %}
       <div class="table-wrapper">
         <table>
-          <thead><tr><th>CPF</th><th>Valor</th><th>Status</th><th>Criado em</th><th>Pago em</th></tr></thead>
+          <thead><tr><th>CPF</th><th>Pacote</th><th>Valor</th><th>Status</th><th>Criado em</th><th>Pago em</th></tr></thead>
           <tbody>
             {% for p in pedidos %}
             <tr>
               <td>{{ p.cpf | cpf }}</td>
+              <td>{{ p.pacote }}</td>
               <td>R$ {{ "%.2f"|format(p.valor_centavos / 100)|replace(".", ",") }}</td>
               <td><span class="status-pill status-{{ p.status }}">{{ p.status }}</span></td>
               <td>{{ p.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
@@ -87,13 +130,62 @@
           </tbody>
         </table>
       </div>
+      {% if total_paginas > 1 %}
+      <div class="area-paginacao">
+        {% if pagina > 1 %}
+          <a href="/area-admin?aba=operacao&pagina={{ pagina - 1 }}&de={{ de or '' }}&ate={{ ate or '' }}&email={{ email }}">← Anterior</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">← Anterior</span>
+        {% endif %}
+        <span class="area-paginacao-info">Página {{ pagina }} de {{ total_paginas }}</span>
+        {% if pagina < total_paginas %}
+          <a href="/area-admin?aba=operacao&pagina={{ pagina + 1 }}&de={{ de or '' }}&ate={{ ate or '' }}&email={{ email }}">Próxima →</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">Próxima →</span>
+        {% endif %}
+      </div>
+      {% endif %}
       {% else %}
-      <p class="area-vazio">Nenhuma cobrança no período selecionado.</p>
+      <p class="area-vazio">Nenhuma cobrança no período/filtro selecionado.</p>
+      {% endif %}
+    </div>
+
+    <div class="area-card">
+      <h2>Eventos recentes</h2>
+      <p class="area-descricao">Login, cadastro, consultas e pagamentos registrados no período (últimos 50).</p>
+      {% if contagem_eventos %}
+      <ul class="checklist admin-eventos-resumo">
+        {% for tipo, total in contagem_eventos.items() %}
+        <li>{{ tipos_label.get(tipo, tipo) }}: <strong>{{ total }}</strong></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if eventos %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Evento</th><th>Descrição</th><th>IP</th><th>Data</th></tr></thead>
+          <tbody>
+            {% for ev in eventos %}
+            <tr>
+              <td>{{ tipos_label.get(ev.tipo, ev.tipo) }}</td>
+              <td>{{ ev.descricao or "—" }}</td>
+              <td>{{ ev.ip or "—" }}</td>
+              <td>{{ ev.criado_em.strftime("%d/%m/%Y %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhum evento registrado no período.</p>
       {% endif %}
     </div>
     {% endif %}
 
     {% if aba == 'alertas' %}
+    {% if teste %}
+    <p class="admin-aviso-sucesso">✅ Canais lidos com sucesso — disparo automático real ainda não está implementado, apenas confirmamos que os valores salvos abaixo estão corretos.</p>
+    {% endif %}
     <div class="area-card">
       <h2>Canais de notificação</h2>
       <p class="area-descricao">Destinos que recebem avisos de eventos da plataforma (consulta criada, Pix pago, cadastro de usuário, falha de login etc).</p>
@@ -102,6 +194,9 @@
         <label>WhatsApp <input type="text" name="whatsapp" value="{{ config.alertas_whatsapp }}" placeholder="(11) 91234-5678"></label>
         <label>Telegram chat_id <input type="text" name="telegram_chat_id" value="{{ config.alertas_telegram_chat_id }}"></label>
         <button type="submit" class="btn-primary">Salvar canais</button>
+      </form>
+      <form method="post" action="/area-admin/alertas/teste" class="admin-form-inline">
+        <button type="submit" class="btn-secundario">Enviar alerta de teste</button>
       </form>
       <p class="area-vazio">Disparo automático por evento ainda não implementado — os canais acima ficam salvos para quando a integração for ligada.</p>
     </div>
@@ -119,12 +214,36 @@
       <ul class="checklist">
         <li>{{ "✅" if config.ads_google_customer_id else "⬜" }} Google Ads conectado</li>
         <li>{{ "✅" if config.ads_ga4_property_id else "⬜" }} GA4 conectado</li>
-        <li>⬜ Looker Studio embed (configure em Configurações → Marketing)</li>
+        <li>{{ "✅" if config.marketing_looker_studio_url else "⬜" }} Looker Studio embed (configure em Configurações → Marketing)</li>
       </ul>
+    </div>
+
+    <div class="area-card">
+      <h2>Painéis Google</h2>
+      <div class="admin-paineis-links">
+        <a href="https://ads.google.com" target="_blank" rel="noopener noreferrer" class="btn-secundario">Google Ads</a>
+        <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer" class="btn-secundario">Google Analytics</a>
+        <a href="https://lookerstudio.google.com" target="_blank" rel="noopener noreferrer" class="btn-secundario">Looker Studio</a>
+        <a href="https://developers.google.com/google-ads/api/docs/start" target="_blank" rel="noopener noreferrer" class="btn-secundario">API Center</a>
+      </div>
+      {% if config.marketing_looker_studio_url %}
+      <div class="admin-looker-embed">
+        <iframe src="{{ config.marketing_looker_studio_url }}" loading="lazy" allowfullscreen></iframe>
+      </div>
+      {% else %}
+      <p class="area-vazio">Nenhum relatório do Looker Studio embutido ainda — configure a URL em Configurações → Marketing.</p>
+      {% endif %}
     </div>
     {% endif %}
 
     {% if aba == 'configuracoes' %}
+    <div class="area-card">
+      <h2>Status do sistema</h2>
+      <ul class="checklist">
+        <li>Provedor de dados de CPF: <strong>{{ status_provedor.cpf_provider }}</strong>{% if status_provedor.modo_demonstracao %} — modo demonstração (dados fictícios){% endif %}</li>
+        <li>{{ "✅" if status_provedor.woovi_configurado else "⬜" }} Woovi (Pix) {{ "configurado" if status_provedor.woovi_configurado else "não configurado" }}</li>
+      </ul>
+    </div>
     <div class="area-card">
       <h2>Atendimento</h2>
       <form class="config-form" method="post" action="/area-admin/configuracoes/atendimento">
@@ -155,12 +274,21 @@
     {% endif %}
 
     {% if aba == 'usuarios' %}
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card"><span class="admin-kpi-label">Usuários cadastrados</span><span class="admin-kpi-valor">{{ total_usuarios }}</span></div>
+      <div class="admin-kpi-card"><span class="admin-kpi-label">Novos nos últimos 30 dias</span><span class="admin-kpi-valor">{{ novos_30_dias }}</span></div>
+    </div>
     <div class="area-card">
       <h2>Controle de Usuários</h2>
+      <form class="area-busca" method="get" action="/area-admin">
+        <input type="hidden" name="aba" value="usuarios">
+        <input type="text" name="email" value="{{ email }}" placeholder="Buscar por nome ou e-mail">
+        <button type="submit" class="btn-primary">Buscar</button>
+      </form>
       {% if usuarios %}
       <div class="table-wrapper">
         <table>
-          <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Papel</th><th>Cadastro</th><th>Consultas pagas</th></tr></thead>
+          <thead><tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Papel</th><th>Cadastro</th><th>Resultados pagos</th></tr></thead>
           <tbody>
             {% for u in usuarios %}
             <tr>
@@ -184,8 +312,23 @@
           </tbody>
         </table>
       </div>
+      {% if total_paginas > 1 %}
+      <div class="area-paginacao">
+        {% if pagina > 1 %}
+          <a href="/area-admin?aba=usuarios&pagina={{ pagina - 1 }}&email={{ email }}">← Anterior</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">← Anterior</span>
+        {% endif %}
+        <span class="area-paginacao-info">Página {{ pagina }} de {{ total_paginas }}</span>
+        {% if pagina < total_paginas %}
+          <a href="/area-admin?aba=usuarios&pagina={{ pagina + 1 }}&email={{ email }}">Próxima →</a>
+        {% else %}
+          <span class="area-paginacao-desabilitado">Próxima →</span>
+        {% endif %}
+      </div>
+      {% endif %}
       {% else %}
-      <p class="area-vazio">Nenhum usuário cadastrado ainda.</p>
+      <p class="area-vazio">Nenhum usuário encontrado.</p>
       {% endif %}
     </div>
     {% endif %}

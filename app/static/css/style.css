@@ -1231,6 +1231,42 @@ tr:last-child td { border-bottom: none; }
 .config-checkbox { flex-direction: row !important; align-items: center; gap: 8px !important; }
 .checklist { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; color: var(--text-muted); }
 
+/* ---------- Admin: funil, eventos, avisos, paineis ---------- */
+.admin-funil { display: flex; flex-direction: column; gap: 10px; }
+.admin-funil-etapa { background: var(--bg-elevated); border-radius: var(--radius-sm); overflow: hidden; }
+.admin-funil-barra {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: fit-content;
+  border-radius: var(--radius-sm);
+}
+.admin-funil-barra-paga { background: var(--success); }
+
+.admin-eventos-resumo { flex-direction: row !important; flex-wrap: wrap; gap: 10px 20px !important; margin-bottom: 18px !important; }
+.admin-eventos-resumo li { background: var(--bg-elevated); padding: 6px 12px; border-radius: 999px; font-size: 0.8rem; }
+
+.admin-aviso-sucesso {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.admin-form-inline { margin: 14px 0; }
+
+.admin-paineis-links { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+
+.admin-looker-embed { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.admin-looker-embed iframe { width: 100%; height: 420px; border: none; display: block; }
+
 .papel-form { display: flex; align-items: center; gap: 8px; }
 .papel-form select {
   background: var(--bg-elevated);

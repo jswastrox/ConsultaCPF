@@ -188,6 +188,23 @@ class MensagemContato(Base):
     criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
+class EventoSistema(Base):
+    """Log unificado de eventos para a aba Operação da área administrativa
+    (login_sucesso, login_falha, cadastro, consulta_criada, pix_criado,
+    pix_pago) — mesma ideia do "eventos recentes" do Consultar Motorista,
+    só que numa tabela só em vez de várias tabelas de auditoria/erro
+    separadas."""
+
+    __tablename__ = "eventos_sistema"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    tipo: Mapped[str] = mapped_column(String(40), index=True)
+    descricao: Mapped[str | None] = mapped_column(String(255))
+    usuario_id: Mapped[int | None] = mapped_column(ForeignKey("usuarios.id"), nullable=True)
+    ip: Mapped[str | None] = mapped_column(String(64))
+    criado_em: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+
+
 class Configuracao(Base):
     """Configurações da área administrativa (Alertas, Marketing, Financeiro), chave/valor."""
 
