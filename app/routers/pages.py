@@ -34,14 +34,14 @@ def buscar(
     request: Request,
     tipo: str = Form("cpf"),
     valor: str = Form(""),
-    cep: str = Form(""),
-    numero: str = Form(""),
+    estado: str = Form(""),
+    cidade: str = Form(""),
 ):
     tipo_limpo = (tipo or "cpf").strip().lower()
     if tipo_limpo not in TIPOS_CONSULTA:
         tipo_limpo = "cpf"
 
-    cpf_alvo = resolver_cpf(tipo_limpo, valor)
+    cpf_alvo = resolver_cpf(tipo_limpo, valor, estado, cidade)
     if not cpf_alvo:
         return RedirectResponse(url=f"/consulta/{tipo_limpo}", status_code=303)
 

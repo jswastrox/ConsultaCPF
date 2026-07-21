@@ -37,11 +37,16 @@
     return d.replace(/^(\d{5})(\d)/, "$1-$2");
   }
 
+  function maskUf(value) {
+    return (value || "").replace(/[^a-zA-Z]/g, "").slice(0, 2).toUpperCase();
+  }
+
   var masks = {
     cpf: maskCpf,
     cnpj: maskCnpj,
     telefone: maskTelefone,
     cep: maskCep,
+    uf: maskUf,
   };
 
   document.querySelectorAll("input[data-mask]").forEach(function (input) {

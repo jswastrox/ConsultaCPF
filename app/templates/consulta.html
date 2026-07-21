@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}Consultar — {{ site_name }}{% endblock %}
-{% block description %}Escolha o método de consulta: CPF, telefone, nome, e-mail, endereço ou CNPJ. Prévia gratuita e resultado completo via Pix.{% endblock %}
+{% block description %}Escolha o método de consulta: CPF, telefone, nome, e-mail ou CNPJ. Prévia gratuita e resultado completo via Pix.{% endblock %}
 {% block og_title %}Consultar — {{ site_name }}{% endblock %}
-{% block og_description %}Escolha o método de consulta: CPF, telefone, nome, e-mail, endereço ou CNPJ.{% endblock %}
+{% block og_description %}Escolha o método de consulta: CPF, telefone, nome, e-mail ou CNPJ.{% endblock %}
 
 {% block content %}
 <section class="consulta-page">
   <div class="container">
+    {% if not tipo_ativo %}
     <header class="consulta-intro">
       <p class="consulta-eyebrow">Consulta rápida</p>
       <h1>Escolha como deseja buscar</h1>
@@ -18,10 +19,9 @@
       {% for chave in tipos_ordem %}
         {% set item = tipos[chave] %}
         <a
-          class="consulta-card{% if tipo_ativo == chave %} is-active{% endif %}"
+          class="consulta-card"
           href="/consulta/{{ chave }}"
           role="listitem"
-          aria-current="{{ 'page' if tipo_ativo == chave else 'false' }}"
         >
           <span class="consulta-card-icon" aria-hidden="true">
             {% if chave == 'cpf' %}
@@ -32,8 +32,6 @@
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             {% elif chave == 'email' %}
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="m4 7 8 6 8-6"/></svg>
-            {% elif chave == 'endereco' %}
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z"/></svg>
             {% else %}
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
             {% endif %}
@@ -45,58 +43,42 @@
         </a>
       {% endfor %}
     </div>
+    {% endif %}
 
     {% if tipo_ativo %}
       {% set ativo = tipos[tipo_ativo] %}
-      <div class="consulta-form-panel" id="formulario-consulta">
+      <div class="consulta-form-panel consulta-form-panel-solo" id="formulario-consulta">
         <div class="consulta-form-header">
-          <h2>{{ ativo.titulo }}</h2>
+          <h1>{{ ativo.titulo }}</h1>
           <p>{{ ativo.descricao }}</p>
         </div>
         <form class="consulta-form" action="/buscar" method="post" data-tipo="{{ tipo_ativo }}">
           <input type="hidden" name="tipo" value="{{ tipo_ativo }}">
 
-          {% if tipo_ativo == 'endereco' %}
+          <div class="consulta-form-row">
+            <label for="valor-input">{{ ativo.label }}</label>
+            <input
+              id="valor-input"
+              type="text"
+              name="valor"
+              inputmode="{{ ativo.inputmode }}"
+              placeholder="{{ ativo.placeholder }}"
+              maxlength="{{ ativo.maxlength }}"
+              required
+              autofocus
+              data-mask="{{ tipo_ativo }}"
+            >
+          </div>
+
+          {% if tipo_ativo == 'nome' %}
+            <p class="consulta-form-assertiva">Informar estado e cidade deixa a busca mais assertiva.</p>
             <div class="consulta-form-row">
-              <label for="cep-input">{{ ativo.label }}</label>
-              <input
-                id="cep-input"
-                type="text"
-                name="cep"
-                inputmode="numeric"
-                placeholder="{{ ativo.placeholder }}"
-                maxlength="9"
-                required
-                autofocus
-                data-mask="cep"
-              >
+              <label for="estado-input">Sigla do Estado (opcional)</label>
+              <input id="estado-input" type="text" name="estado" placeholder="Ex. RJ" maxlength="2" data-mask="uf">
             </div>
             <div class="consulta-form-row">
-              <label for="numero-input">Número</label>
-              <input
-                id="numero-input"
-                type="text"
-                name="numero"
-                inputmode="numeric"
-                placeholder="123"
-                maxlength="10"
-                required
-              >
-            </div>
-          {% else %}
-            <div class="consulta-form-row">
-              <label for="valor-input">{{ ativo.label }}</label>
-              <input
-                id="valor-input"
-                type="text"
-                name="valor"
-                inputmode="{{ ativo.inputmode }}"
-                placeholder="{{ ativo.placeholder }}"
-                maxlength="{{ ativo.maxlength }}"
-                required
-                autofocus
-                data-mask="{{ tipo_ativo }}"
-              >
+              <label for="cidade-input">Nome da Cidade (opcional)</label>
+              <input id="cidade-input" type="text" name="cidade" placeholder="Ex. Barra Mansa" maxlength="80">
             </div>
           {% endif %}
 
@@ -109,6 +91,7 @@
         </form>
         <p class="consulta-form-trust">Consulta segura. Dados tratados conforme a LGPD.</p>
       </div>
+      <p class="consulta-voltar-metodo"><a href="/consulta">← Voltar e escolher outro método</a></p>
     {% endif %}
   </div>
 </section>

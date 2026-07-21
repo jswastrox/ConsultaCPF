@@ -67,7 +67,7 @@ def _seed(texto: str) -> int:
     return int(hashlib.sha256(texto.encode("utf-8")).hexdigest(), 16) % (2**32)
 
 
-def resolver_cpf(tipo: str, valor: str = "") -> str | None:
+def resolver_cpf(tipo: str, valor: str = "", estado: str = "", cidade: str = "") -> str | None:
     """Retorna o CPF (11 dígitos) que a prévia deve exibir para essa busca,
     ou None se o valor informado for inválido."""
     tipo = (tipo or "cpf").strip().lower()
@@ -83,6 +83,14 @@ def resolver_cpf(tipo: str, valor: str = "") -> str | None:
         cnpj = apenas_digitos(valor)
         return gerar_cpf_valido(_seed(f"cnpj:{cnpj}")) if validar_cnpj(cnpj) else None
 
-    # telefone, nome, email: qualquer termo não vazio resolve a um único
-    # candidato determinístico (mesmo termo -> sempre a mesma "pessoa").
+    if tipo == "nome":
+        # Estado/cidade são opcionais, mas deixam a busca mais assertiva:
+        # incluí-los no seed muda qual candidato é encontrado, simulando um
+        # filtro geográfico real sobre um nome comum.
+        estado = (estado or "").strip().lower()
+        cidade = (cidade or "").strip().lower()
+        return gerar_cpf_valido(_seed(f"nome:{valor.lower()}:{estado}:{cidade}"))
+
+    # telefone, email: qualquer termo não vazio resolve a um único candidato
+    # determinístico (mesmo termo -> sempre a mesma "pessoa").
     return gerar_cpf_valido(_seed(f"{tipo}:{valor.lower()}"))
