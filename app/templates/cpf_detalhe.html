@@ -48,7 +48,7 @@
           <div class="previa-linha-label"><span class="previa-icone previa-icone-vermelho">🛡️</span> Situação Cadastral</div>
           <div class="previa-linha-valor">
             {% if desbloqueado %}{{ pessoa.situacao_cadastral or "—" }}
-            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            {% else %}<span class="campo-borrado">••••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔓 Desbloquear</button>{% endif %}
           </div>
         </div>
 
@@ -56,7 +56,7 @@
           <div class="previa-linha-label"><span class="previa-icone previa-icone-rosa">👥</span> Nome da Mãe</div>
           <div class="previa-linha-valor">
             {% if desbloqueado %}{{ pessoa.nome_mae or "—" }}
-            {% else %}<span class="campo-borrado">••••• •••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            {% else %}<span class="campo-borrado">••••• •••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔓 Desbloquear</button>{% endif %}
           </div>
         </div>
 
@@ -64,7 +64,7 @@
           <div class="previa-linha-label"><span class="previa-icone previa-icone-verde">📞</span> Telefone</div>
           <div class="previa-linha-valor">
             {% if desbloqueado %}{{ pessoa.telefones[0] if pessoa.telefones else "—" }}
-            {% else %}<span class="campo-borrado">(••) •••••-••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            {% else %}<span class="campo-borrado">(••) •••••-••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔓 Desbloquear</button>{% endif %}
           </div>
         </div>
 
@@ -72,7 +72,7 @@
           <div class="previa-linha-label"><span class="previa-icone previa-icone-azul">✉️</span> E-mail</div>
           <div class="previa-linha-valor">
             {% if desbloqueado %}{{ pessoa.emails[0] if pessoa.emails else "—" }}
-            {% else %}<span class="campo-borrado">••••••@••••••.com</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>{% endif %}
+            {% else %}<span class="campo-borrado">••••••@••••••.com</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔓 Desbloquear</button>{% endif %}
           </div>
         </div>
 
@@ -82,7 +82,7 @@
             {% if desbloqueado %}
               {{ pessoa.endereco_logradouro }}, {{ pessoa.endereco_numero }} — {{ pessoa.endereco_bairro }}, {{ pessoa.endereco_municipio }}/{{ pessoa.endereco_uf }} — CEP {{ pessoa.endereco_cep }}
             {% else %}
-              <span class="campo-borrado">Rua ••••••••••, ••• — ••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔒 Liberar</button>
+              <span class="campo-borrado">Rua ••••••••••, ••• — ••••••••</span><button type="button" class="btn-liberar-campo" data-cpf="{{ pessoa.cpf }}">🔓 Desbloquear</button>
             {% endif %}
           </div>
         </div>
