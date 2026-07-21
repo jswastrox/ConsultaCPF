@@ -11,6 +11,11 @@
   let pollTimer = null;
 
   function abrirModal(event) {
+    if (!window.USUARIO_LOGADO) {
+      const destino = window.location.pathname + window.location.search;
+      window.location.href = "/login?next=" + encodeURIComponent(destino);
+      return;
+    }
     cpf = event.currentTarget.getAttribute("data-cpf");
     pacote = event.currentTarget.getAttribute("data-pacote") || "basico";
     modal.hidden = false;
@@ -74,8 +79,8 @@
       if (data.status === "paid") {
         clearInterval(pollTimer);
         const statusEl = document.getElementById("modal-status");
-        if (statusEl) statusEl.textContent = "Pagamento confirmado! Atualizando página…";
-        setTimeout(() => window.location.reload(), 1200);
+        if (statusEl) statusEl.textContent = "Pagamento confirmado! Redirecionando…";
+        setTimeout(() => (window.location.href = "/cpf/" + cpf), 1200);
       }
     } catch (err) {
       // silencioso: tenta de novo no próximo ciclo

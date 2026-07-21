@@ -24,9 +24,17 @@ router = APIRouter()
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
+def _next_seguro(next: str | None) -> str:
+    """Só aceita redirecionar para um caminho relativo do próprio site —
+    evita open redirect via ?next=https://site-malicioso.com."""
+    if next and next.startswith("/") and not next.startswith("//"):
+        return next
+    return "/"
+
+
 @router.get("/login")
-def tela_login(request: Request):
-    return templates.TemplateResponse(request, "login.html", {})
+def tela_login(request: Request, next: str = "/"):
+    return templates.TemplateResponse(request, "login.html", {"next": _next_seguro(next)})
 
 
 @router.post("/login")
@@ -37,7 +45,9 @@ def enviar_login(
     email: str = Form(...),
     senha: str = Form(...),
     manter_conectado: bool = Form(False),
+    next: str = Form("/"),
 ):
+    destino = _next_seguro(next)
     email_normalizado = email.strip().lower()
     usuario = db.scalar(select(Usuario).where(Usuario.email == email_normalizado))
 
@@ -45,7 +55,7 @@ def enviar_login(
         return templates.TemplateResponse(
             request,
             "login.html",
-            {"erro": "E-mail ou senha inválidos.", "email": email},
+            {"erro": "E-mail ou senha inválidos.", "email": email, "next": destino},
             status_code=401,
         )
 
@@ -53,7 +63,7 @@ def enviar_login(
         return templates.TemplateResponse(
             request,
             "login.html",
-            {"erro": "Esta conta está desativada.", "email": email},
+            {"erro": "Esta conta está desativada.", "email": email, "next": destino},
             status_code=403,
         )
 
@@ -61,14 +71,14 @@ def enviar_login(
     db.commit()
 
     token = criar_sessao(db, usuario, manter_conectado)
-    redirect = RedirectResponse(url="/", status_code=303)
+    redirect = RedirectResponse(url=destino, status_code=303)
     definir_cookie_sessao(redirect, token, manter_conectado)
     return redirect
 
 
 @router.get("/cadastro")
-def tela_cadastro(request: Request):
-    return templates.TemplateResponse(request, "cadastro.html", {})
+def tela_cadastro(request: Request, next: str = "/"):
+    return templates.TemplateResponse(request, "cadastro.html", {"next": _next_seguro(next)})
 
 
 @router.post("/cadastro")
@@ -81,8 +91,10 @@ def enviar_cadastro(
     senha: str = Form(...),
     confirmar_senha: str = Form(...),
     aceite_termos: bool = Form(False),
+    next: str = Form("/"),
 ):
-    valores = {"nome": nome, "email": email}
+    destino = _next_seguro(next)
+    valores = {"nome": nome, "email": email, "next": destino}
 
     def erro(msg: str, status_code: int = 400):
         return templates.TemplateResponse(
@@ -122,7 +134,7 @@ def enviar_cadastro(
     db.refresh(usuario)
 
     token = criar_sessao(db, usuario, manter_conectado=True)
-    redirect = RedirectResponse(url="/", status_code=303)
+    redirect = RedirectResponse(url=destino, status_code=303)
     definir_cookie_sessao(redirect, token, manter_conectado=True)
     return redirect
 

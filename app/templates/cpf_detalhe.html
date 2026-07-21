@@ -147,6 +147,12 @@
     <div class="previa-desbloquear-tudo">
       <a href="/cpf/{{ pessoa.cpf }}/desbloquear?origem={{ origem }}" class="btn-primary btn-large">🔓 Desbloquear todas as informações</a>
     </div>
+    {% elif not nivel_detalhada %}
+    <div class="previa-desbloquear-tudo">
+      <a href="/cpf/{{ pessoa.cpf }}/desbloquear?origem={{ origem }}" class="btn-secundario">
+        {{ "⬆️ Fazer upgrade para ver ainda mais informações" if nivel_completa else "⬆️ Fazer upgrade de pacote" }}
+      </a>
+    </div>
     {% endif %}
   </div>
 </section>

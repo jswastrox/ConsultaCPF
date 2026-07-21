@@ -1382,6 +1382,16 @@ tr:last-child td { border-bottom: none; }
   margin-bottom: 20px;
 }
 .desbloquear-page h1 { font-size: 1.6rem; margin-bottom: 18px; }
+.desbloquear-upgrade-nota {
+  max-width: 480px;
+  margin: -8px auto 20px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--success-bg);
+  color: var(--success);
+  font-size: 0.86rem;
+}
+.desbloquear-upgrade-nota strong { color: inherit; }
 .desbloquear-toggle-diff {
   display: inline-flex;
   align-items: center;
@@ -1438,6 +1448,7 @@ tr:last-child td { border-bottom: none; }
   border-top: 2px solid var(--border-strong);
 }
 .comparativo-preco { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--accent-deep); }
+.comparativo-incluido { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--success); }
 .comparativo-tabela tfoot .btn-primary { width: 100%; }
 
 /* ---------- Responsive ---------- */

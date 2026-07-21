@@ -6,6 +6,9 @@
   <div class="container">
     <div class="desbloquear-cpf-badge">{{ pessoa.cpf | cpf if mostrar_cpf_completo else pessoa.cpf | mascarar_cpf }}</div>
     <h1>Escolha o tipo de desbloqueio</h1>
+    {% if nivel_atual >= 0 %}
+    <p class="desbloquear-upgrade-nota">Você já tem o <strong>Pacote {{ {"basico": "Básico", "completa": "Completo", "detalhada": "Detalhado"}[pacote_atual] }}</strong> para este CPF. Faça upgrade para ver mais informações.</p>
+    {% endif %}
 
     <label class="desbloquear-toggle-diff">
       <input type="checkbox" id="toggle-diferencas">
@@ -39,16 +42,28 @@
           <tr>
             <td class="comparativo-col-label"></td>
             <td>
-              <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_basico)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">Comprar</button>
+              {% if nivel_atual >= 0 %}
+                <p class="comparativo-incluido">✅ Incluído</p>
+              {% else %}
+                <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_basico)|replace(".", ",") }}</p>
+                <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="basico">Comprar</button>
+              {% endif %}
             </td>
             <td>
-              <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_completa)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">Comprar</button>
+              {% if nivel_atual >= 1 %}
+                <p class="comparativo-incluido">✅ Incluído</p>
+              {% else %}
+                <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_completa)|replace(".", ",") }}</p>
+                <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="completa">{{ "Fazer upgrade" if nivel_atual >= 0 else "Comprar" }}</button>
+              {% endif %}
             </td>
             <td>
-              <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_detalhada)|replace(".", ",") }}</p>
-              <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">Comprar</button>
+              {% if nivel_atual >= 2 %}
+                <p class="comparativo-incluido">✅ Incluído</p>
+              {% else %}
+                <p class="comparativo-preco">R$ {{ "%.2f"|format(preco_detalhada)|replace(".", ",") }}</p>
+                <button type="button" class="btn-primary js-pix-trigger" data-cpf="{{ pessoa.cpf }}" data-pacote="detalhada">{{ "Fazer upgrade" if nivel_atual >= 0 else "Comprar" }}</button>
+              {% endif %}
             </td>
           </tr>
         </tfoot>

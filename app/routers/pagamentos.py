@@ -33,6 +33,10 @@ def criar_pedido(
     response: Response,
     db: Session = Depends(get_db),
 ):
+    usuario = usuario_logado(request, db)
+    if usuario is None:
+        raise HTTPException(401, "É necessário estar logado para comprar um relatório.")
+
     cpf_limpo = apenas_digitos(body.cpf)
     pessoa = db.get(Pessoa, cpf_limpo)
     if pessoa is None:
@@ -42,7 +46,6 @@ def criar_pedido(
     valor_centavos = preco_centavos(pacote)
 
     buyer_token = get_or_create_buyer_token(request, response)
-    usuario = usuario_logado(request, db)
     correlation_id = f"consultacpf-{uuid.uuid4().hex[:20]}"
 
     try:
